@@ -1,0 +1,217 @@
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/17/2025,17:49:30: ------------------------------
+01/17/2025,17:49:30: valid Recall@10: 0.06409 Recall@20: 0.08946 NDCG@10: 0.03797 NDCG@20: 0.04494
+01/17/2025,17:49:30: test Recall@10: 0.02576 Recall@20: 0.03797 NDCG@10: 0.01386 NDCG@20: 0.01720
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/17/2025,18:23:59: ------------------------------
+01/17/2025,18:23:59: valid Recall@10: 0.06480 Recall@20: 0.09107 NDCG@10: 0.03740 NDCG@20: 0.04464
+01/17/2025,18:23:59: test Recall@10: 0.02720 Recall@20: 0.03865 NDCG@10: 0.01451 NDCG@20: 0.01771
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                1.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/17/2025,18:46:48: ------------------------------
+01/17/2025,18:46:48: valid Recall@10: 0.05978 Recall@20: 0.08689 NDCG@10: 0.03620 NDCG@20: 0.04365
+01/17/2025,18:46:48: test Recall@10: 0.02442 Recall@20: 0.03615 NDCG@10: 0.01294 NDCG@20: 0.01620

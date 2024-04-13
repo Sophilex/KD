@@ -1,0 +1,49 @@
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            300
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    rrdvar
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+rrd_K                                    50
+rrd_L                                    100
+rrd_T                                    10
+rrd_mxK                                  500
+rrd_unselected                           0
+rrd_neg                                  1.5
+----------------------------------------ARGUMENTS----------------------------------------

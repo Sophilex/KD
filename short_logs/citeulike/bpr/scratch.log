@@ -1,0 +1,80 @@
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   3
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       0.001
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   3
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       0.001
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,18:30:54: ------------------------------
+01/16/2025,18:30:54: valid Recall@10: 0.06824 Recall@20: 0.10149 NDCG@10: 0.04014 NDCG@20: 0.04929
+01/16/2025,18:30:54: test Recall@10: 0.02832 Recall@20: 0.04423 NDCG@10: 0.01554 NDCG@20: 0.01986
+01/16/2025,18:46:19: ------------------------------
+01/16/2025,18:46:19: valid Recall@10: 0.06824 Recall@20: 0.10149 NDCG@10: 0.04014 NDCG@20: 0.04929
+01/16/2025,18:46:19: test Recall@10: 0.02832 Recall@20: 0.04423 NDCG@10: 0.01554 NDCG@20: 0.01986

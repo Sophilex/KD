@@ -1,0 +1,633 @@
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                1.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,16:31:16: ------------------------------
+01/16/2025,16:31:16: valid Recall@10: 0.05316 Recall@20: 0.08426 NDCG@10: 0.03174 NDCG@20: 0.04031
+01/16/2025,16:31:16: test Recall@10: 0.02180 Recall@20: 0.03468 NDCG@10: 0.01230 NDCG@20: 0.01582
+01/16/2025,16:59:48: ------------------------------
+01/16/2025,16:59:48: valid Recall@10: 0.06355 Recall@20: 0.09257 NDCG@10: 0.03712 NDCG@20: 0.04526
+01/16/2025,16:59:48: test Recall@10: 0.02500 Recall@20: 0.03839 NDCG@10: 0.01365 NDCG@20: 0.01730
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,17:20:26: ------------------------------
+01/16/2025,17:20:26: valid Recall@10: 0.05848 Recall@20: 0.08848 NDCG@10: 0.03525 NDCG@20: 0.04361
+01/16/2025,17:20:26: test Recall@10: 0.02374 Recall@20: 0.03674 NDCG@10: 0.01275 NDCG@20: 0.01630
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                1.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,17:33:37: ------------------------------
+01/16/2025,17:33:37: valid Recall@10: 0.05168 Recall@20: 0.08163 NDCG@10: 0.03047 NDCG@20: 0.03869
+01/16/2025,17:33:37: test Recall@10: 0.02060 Recall@20: 0.03338 NDCG@10: 0.01170 NDCG@20: 0.01523
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,18:48:44: ------------------------------
+01/16/2025,18:48:44: valid Recall@10: 0.06355 Recall@20: 0.09258 NDCG@10: 0.03712 NDCG@20: 0.04526
+01/16/2025,18:48:44: test Recall@10: 0.02500 Recall@20: 0.03839 NDCG@10: 0.01364 NDCG@20: 0.01729
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                0.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,19:08:39: ------------------------------
+01/16/2025,19:08:39: valid Recall@10: 0.05857 Recall@20: 0.08840 NDCG@10: 0.03529 NDCG@20: 0.04354
+01/16/2025,19:08:39: test Recall@10: 0.02314 Recall@20: 0.03524 NDCG@10: 0.01260 NDCG@20: 0.01597
+----------------------------------------TEACHER----------------------------------------
+jgcf_alpha                               0.3
+jgcf_jacobi_a                            0.5
+jgcf_jacobi_b                            0
+base_coeff                               3
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+jgcf_alpha                               0.1
+jgcf_jacobi_a                            1.0
+jgcf_jacobi_b                            1.0
+base_coeff                               4
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 jgcf
+model                                    mrrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+mrrd_K                                   50
+mrrd_L                                   100
+mrrd_T                                   10
+mrrd_mxK                                 500
+mrrd_beta                                1.1
+mrrd_tau                                 1
+mrrd_gamma                               1
+no_sort                                  0
+loss_type                                rrd
+sample_rank                              True
+mrrd_test_type                           0
+----------------------------------------ARGUMENTS----------------------------------------
+01/16/2025,19:19:09: ------------------------------
+01/16/2025,19:19:09: valid Recall@10: 0.05232 Recall@20: 0.08073 NDCG@10: 0.03007 NDCG@20: 0.03771
+01/16/2025,19:19:09: test Recall@10: 0.02085 Recall@20: 0.03184 NDCG@10: 0.01188 NDCG@20: 0.01489

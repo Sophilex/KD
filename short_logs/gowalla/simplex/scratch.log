@@ -1,0 +1,138 @@
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.0001
+embedding_dim                            1000
+simplex_dropout_rate                     0.2
+simplex_similarity_score                 cosine
+simplex_gamma                            0.4
+simplex_margin                           0.3
+simplex_max_len                          500
+simplex_negative_weight                  100
+simplex_enable_bias                      False
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               256
+num_ns                                   2000
+neg_sampling_on_all                      True
+backbone                                 simplex
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.0001
+wd                                       1e-08
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.0001
+embedding_dim                            1000
+simplex_dropout_rate                     0.2
+simplex_similarity_score                 cosine
+simplex_gamma                            0.4
+simplex_margin                           0.3
+simplex_max_len                          500
+simplex_negative_weight                  100
+simplex_enable_bias                      False
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               256
+num_ns                                   2000
+neg_sampling_on_all                      True
+backbone                                 simplex
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.0001
+wd                                       1e-08
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.0001
+embedding_dim                            1000
+simplex_dropout_rate                     0.2
+simplex_similarity_score                 cosine
+simplex_gamma                            0.4
+simplex_margin                           0.3
+simplex_max_len                          500
+simplex_negative_weight                  100
+simplex_enable_bias                      False
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               256
+num_ns                                   2000
+neg_sampling_on_all                      True
+backbone                                 simplex
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.0001
+wd                                       1e-08
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------

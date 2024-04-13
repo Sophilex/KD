@@ -1,0 +1,129 @@
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-06
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-06
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   0
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    scratch
+train_teacher                            True
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-06
+lmbda                                    1.0
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+----------------------------------------ARGUMENTS----------------------------------------
