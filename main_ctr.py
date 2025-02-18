@@ -113,11 +113,12 @@ def main(args):
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
     if not args.no_save:
+        print("YES!")
         embedding_dim = teacher_args.embedding_dim if args.train_teacher else student_args.embedding_dim
         backbone_name = teacher_args.model if args.train_teacher else student_args.model
         save_dir = os.path.join("checkpoints", args.dataset, args.backbone, f"{args.model.lower()}-{backbone_name.lower()}-{embedding_dim}")
         os.makedirs(save_dir, exist_ok=True)
-        torch.save(best_model, os.path.join(save_dir, "BEST_EPOCH.pt"))
+        torch.save(best_model, os.path.join("/kaggle/working", "BEST_EPOCH.pt"))
         for idx, ckpt in enumerate(ckpts):
             if (idx + 1) * args.ckpt_interval >= best_epoch:
                 break

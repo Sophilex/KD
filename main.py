@@ -14,7 +14,7 @@ from dataset import load_cf_data, implicit_CF_dataset, implicit_CF_dataset_test
 from evaluation import Evaluator
 import modeling.backbone as backbone
 import modeling.KD as KD
-from utils import seed_all, avg_dict, Logger
+from utils import seed_all, avg_dict, Logger, Drawer, Var_calc
 
 def main(args):
     # Dataset
@@ -68,6 +68,25 @@ def main(args):
         Evaluator.print_final_result(logger, tmp_evaluator.eval_dict)
         logger.log('-' * 88, pre=False)
 
+        if args.draw_teacher:
+            ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
+            drawer = Drawer(args, args.rrd_mxK, ccdf_path)
+            drawer.plot_CCDF4negs(tmp_model, train_loader, validset, testset, "teacher-ccdf.png")
+            return
+
+
+        # get distribution of teacher's predictions
+    
+    # get the variance of users' predictions within each epoch
+    model_variance = None
+    variance_calculator = None
+    if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
+        variance_calculator = Var_calc(args, train_loader)  
+        model_variance = variance_calculator.get_rating_variance()
+        model.set_model_variance(model_variance)
+        # variance_calculator.update_rating_variance(model, 0) 
+
+
     for epoch in range(args.epochs):
         logger.log(f'Epoch [{epoch + 1}/{args.epochs}]')
         tic1 = time.time()
@@ -102,7 +121,24 @@ def main(args):
         epoch_kd_loss = torch.mean(torch.stack(epoch_kd_loss)).item()
 
         toc1 = time.time()
-        
+
+        # update variance
+        if args.model.lower() == "rrdvk":
+            if epoch % args.calu_len == 0:
+                feature_idx = model.reset_item() # 后续需要计算的user-item对的方差
+                model_variance, cur_idx = variance_calculator.get_rating_variance() # 前几轮计算得到的方差
+                model.set_model_variance(model_variance, cur_idx) 
+                variance_calculator.reset(feature_idx)
+
+            variance_calculator.update_rating_variance(model, epoch)
+
+        if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
+            # print(f"update variance... - epoch: {epoch + 1}")
+            variance_calculator.update_rating_variance(model, epoch)
+            model_variance = variance_calculator.get_rating_variance()
+            model.set_model_variance(model_variance)
+
+
         # evaluation
         if epoch % args.eval_period == 0:
             logger.log("Evaluating...")
@@ -114,12 +150,20 @@ def main(args):
                 best_model = deepcopy(model.param_to_save)
                 best_epoch = epoch
         
+        if epoch % 50 == 0 and epoch != 0 and args.draw_student:
+            ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
+            drawer = Drawer(args, args.rrd_mxK, ccdf_path)
+            drawer.plot_CCDF4negs(model, train_loader, validset, testset, "student-ccdf-{}.png".format(epoch))
+        
         # save intermediate checkpoints
         if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
             ckpts.append(deepcopy(model.param_to_save))
     
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
+    Evaluator.print_final_result(ans_logger, eval_dict)
+
+
     if not args.no_save:
         embedding_dim = Teacher.embedding_dim if args.train_teacher else Student.embedding_dim
         save_dir = os.path.join("checkpoints", args.dataset, args.backbone, f"{args.model.lower()}-{embedding_dim}")
@@ -136,10 +180,12 @@ def main(args):
 if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
     logger = Logger(args, args.no_log)
+    ans_logger = Logger(args, args.no_log, True)
 
     if args.run_all:
         args_copy = deepcopy(args)
         eval_dicts = []
+
         for seed in range(5):
             args = deepcopy(args_copy)
             args.seed = seed
@@ -155,9 +201,13 @@ if __name__ == '__main__':
         logger.log('=' * 60)
         Evaluator.print_final_result(logger, avg_eval_dict, prefix="avg ")
     else:
+
         logger.log_args(teacher_args, "TEACHER")
+        ans_logger.log_args(teacher_args, "TEACHER")
         if not args.train_teacher:
             logger.log_args(student_args, "STUDENT")
+            ans_logger.log_args(student_args, "STUDENT")
         logger.log_args(args, "ARGUMENTS")
+        ans_logger.log_args(args, "ARGUMENTS")
         seed_all(args.seed)
         main(args)

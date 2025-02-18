@@ -8,6 +8,7 @@ LOG_DIR = 'logs/'
 CONFIG_DIR = 'configs/'
 DATA_DIR = 'data/'
 CKPT_DIR = 'checkpoints/'
+SHORT_LOG_DIR = 'short_logs/'
 
 
 parser = argparse.ArgumentParser(description=__doc__,
@@ -41,16 +42,22 @@ parser.add_argument('--wd', type=float, default=0.)
 parser.add_argument('--lmbda', type=float, default=1., help="weight of kd loss")
 
 parser.add_argument('--eval_period', type=int, default=1)
-parser.add_argument('--K_list', type=list, default=[10, 20])
+parser.add_argument('--K_list', type=list, default=[10, 20]) # 评估推荐模型时需要考虑的 Top-K 推荐列表 中的 K 值，评估时会遍历这个列表
+
 parser.add_argument('--early_stop_metric', type=str, default='NDCG')
 parser.add_argument('--early_stop_K', type=int, default=10)
-parser.add_argument('--early_stop_patience', type=int, default=30)
+parser.add_argument('--early_stop_patience', type=int, default=30) # early_stop_metric@early_stop_K在验证集上连续early_stop_patience轮没有提升则early stop
+
+parser.add_argument('--draw_teacher', action='store_true', help="draw ccdf")
+parser.add_argument('--draw_student', action='store_true', help="draw ccdf")
+
 
 parser.add_argument(
         '--cfg',
         nargs='+',
         action=DictAction,
         help='override some settings in the model config')
+
 parser.add_argument(
         '--teacher',
         nargs='+',
@@ -65,7 +72,7 @@ parser.add_argument(
 args = parser.parse_args()
 if args.train_teacher:
     args.model = "scratch"
-args.__dict__.update({"LOG_DIR": LOG_DIR, "CONFIG_DIR": CONFIG_DIR, "DATA_DIR": DATA_DIR, "CKPT_DIR": CKPT_DIR})
+args.__dict__.update({"LOG_DIR": LOG_DIR, "CONFIG_DIR": CONFIG_DIR, "DATA_DIR": DATA_DIR, "CKPT_DIR": CKPT_DIR, "SHORT_LOG_DIR": SHORT_LOG_DIR})
 
 """
 create args for backbone

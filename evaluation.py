@@ -19,8 +19,8 @@ class Evaluator:
         self.early_stop_metric = args.early_stop_metric
         self.task = args.task
         if self.task == 'rec':
-            self.K_list = args.K_list
-            self.K_max = max(self.K_list)
+            self.K_list = args.K_list 
+            self.K_max = max(self.K_list) # 调用 torch.topk 函数，生成每个用户的 Top-K 推荐列表
             self.early_top_K = args.early_stop_K
             self.metrics = ['Recall', 'NDCG']
             self.METRICS_DICT = {metric: {K: -1. for K in self.K_list} for metric in self.metrics}
@@ -36,7 +36,7 @@ class Evaluator:
         """
         {
             'early_stop': 0, 'early_stop_max': 0, 'final_epoch': 0,
-            'best_result': {
+            'best_result':  {
                                 'NDCG': {5: -1., 10: -1.}, 
                                 'Recall': {5: -1., 10: -1.}
                             },
@@ -74,12 +74,16 @@ class Evaluator:
 
         model.eval()
         test_loader = data.DataLoader(list(test_dict.keys()), batch_size=train_loader.batch_size)
+
+        # 生成topk推荐列表
         topK_items = torch.zeros((num_users, self.K_max), dtype=torch.long)
         for batch_user in test_loader:
             score_mat = model.get_ratings(batch_user)
+            # np.savetxt("score_mat.txt", np.sort(score_mat[0].cpu().numpy()))
             for idx, user in enumerate(batch_user):
                 pos = train_dict[user.item()]
                 score_mat[idx, pos] = -1e10
+
             _, sorted_mat = torch.topk(score_mat, k=self.K_max, dim=1)
             topK_items[batch_user, :] = sorted_mat.detach().cpu()
         
@@ -155,7 +159,7 @@ class Evaluator:
                 if self.task == 'rec':
                     K = self.early_top_K
                     best_performance = self.eval_dict['best_result'][metric][K]
-                    cur_performance = eval_results['valid'][metric][K]
+                    cur_performance = eval_results['valid'][metric][K] # 依据验证集
                 elif self.task == 'ctr':
                     best_performance = self.eval_dict['best_result'][metric]
                     cur_performance = eval_results['valid'][metric]
@@ -210,6 +214,8 @@ class Evaluator:
                 else:
                     raise NotImplementedError
             logger.log()
+    
+    
 
     @classmethod
     def print_final_result(self, logger, eval_dict, prefix=""):
@@ -219,14 +225,13 @@ class Evaluator:
         ----------
         eval_dict : dict
         """
-        logger.log('-'*30)
 
+        logger.log('-'*30)
         for mode in ['valid', 'test']:
             if mode == 'valid':
                 key = 'best_result'
             else:
                 key = 'final_result'
-
             logger.log(prefix + mode, end='')
             for metric in eval_dict[key].keys():
                 if isinstance(eval_dict[key][metric], dict):

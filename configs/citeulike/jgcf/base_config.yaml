@@ -1,0 +1,22 @@
+teacher:
+    jgcf_alpha: 0.3
+    jgcf_jacobi_a: 0.5
+    jgcf_jacobi_b: 0
+    base_coeff: 3
+    init_std: 0.1
+    keep_prob: 0.6
+    A_split: False
+    dropout: False
+    embedding_dim: 2000
+    num_layers: 3
+student:
+    jgcf_alpha: 0.1
+    jgcf_jacobi_a: 1.0
+    jgcf_jacobi_b: 1.0
+    base_coeff: 4
+    init_std: 0.1
+    keep_prob: 0.6
+    A_split: False
+    dropout: False
+    embedding_dim: 20
+    num_layers: 3

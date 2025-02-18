@@ -161,6 +161,23 @@ class BaseGCN(BaseRec):
         users = users[batch_user]
         score_mat = torch.matmul(users, items.T)
         return score_mat
+    
+    def get_user_item_ratings(self, batch_user, item_idx):
+        # user_items: 用户要计算的item num_batch_user X num_batch_item
+        users, items = self.get_all_post_embedding()
+        users = users[batch_user] # num_user X dim
+
+        # score = []
+        # for i in range(users.shape(0)):
+        #     score = []
+        #     for j in range(user_item.shape(1)):
+        #         ans.append(torch.matmul(users[i],items[user_item[i][j]]))
+        #     score.append(ans)
+
+        score = torch.matmul(users, items[item_idx].transpose(1, 2)) # num_batch_user X num_batch_item
+        return score
+
+        
 
 
 class BaseCTR(nn.Module):

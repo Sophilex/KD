@@ -246,6 +246,62 @@ class LightGCN(BaseGCN):
         
         return users, items
 
+class JGCF(LightGCN):
+    def __init__(self, dataset, args):
+        super().__init__(dataset, args)
+        self.alpha = args.jgcf_alpha
+        self.a = args.jgcf_jacobi_a
+        self.b = args.jgcf_jacobi_b
+        self.base_coeff = args.base_coeff
+
+    def JacobiConv(self, L, xs, adj, coeffs, l=-1.0, r=1.0):
+        '''
+        Jacobi Bases.
+        '''
+        a = self.a
+        b = self.b
+        if L == 0: return xs[0]
+        if L == 1:
+            coef1 = (a - b) / 2 - (a + b + 2) / 2 * (l + r) / (r - l)
+            coef1 *= coeffs[0]
+            coef2 = (a + b + 2) / (r - l)
+            coef2 *= coeffs[0]
+            return coef1 * xs[-1] + coef2 * torch.sparse.mm(adj, xs[-1])
+        coef_l = 2 * L * (L + a + b) * (2 * L - 2 + a + b)
+        coef_lm1_1 = (2 * L + a + b - 1) * (2 * L + a + b) * (2 * L + a + b - 2)
+        coef_lm1_2 = (2 * L + a + b - 1) * (a**2 - b**2)
+        coef_lm2 = 2 * (L - 1 + a) * (L - 1 + b) * (2 * L + a + b)
+        tmp1 = coeffs[L - 1] * (coef_lm1_1 / coef_l)
+        tmp2 = coeffs[L - 1] * (coef_lm1_2 / coef_l)
+        tmp3 = coeffs[L - 1] * coeffs[L - 2] * (coef_lm2 / coef_l)
+        tmp1_2 = tmp1 * (2 / (r - l))
+        tmp2_2 = tmp1 * ((r + l) / (r - l)) + tmp2
+        nx = tmp1_2 * torch.sparse.mm(adj, xs[-1]) - tmp2_2 * xs[-1]
+        nx -= tmp3 * xs[-2]
+        return nx
+
+    def computer(self):
+        """
+        propagate methods for JGCF
+        """
+        users_emb = self.user_emb.weight
+        items_emb = self.item_emb.weight
+        all_emb = torch.cat([users_emb, items_emb])
+        coeffs = nn.ParameterList([
+            nn.Parameter(torch.tensor(float(min(1 / self.base_coeff, 1))), requires_grad=False) for i in range(self.num_layers + 1)
+        ])
+        coeffs = [self.base_coeff * torch.tanh(_) for _ in coeffs]
+        jgcf_out = [self.JacobiConv(0, [all_emb], self.Graph, coeffs)]
+        for layer in range(1, self.num_layers + 1):
+            tx = self.JacobiConv(layer, jgcf_out, self.Graph, coeffs)
+            jgcf_out.append(tx)
+        jgcf_out = [x.unsqueeze(1) for x in jgcf_out]
+        all_embeddings_low = torch.cat(jgcf_out, dim=1).mean(1)
+        all_embeddings_mid = self.alpha * all_emb - all_embeddings_low
+        all_embeddings = torch.hstack([all_embeddings_low, all_embeddings_mid])
+        users, items = torch.split(all_embeddings, [self.num_users, self.num_items])
+        return users, items
+
 
 # Refer to https://github.com/reczoo/RecZoo/blob/main/matching/cf/SimpleX/src/SimpleX.py
 class SimpleX(BaseRec):

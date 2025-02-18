@@ -70,6 +70,8 @@ class BaseKD4Rec(BaseKD):
     def get_ratings(self, batch_user):
         return self.student.get_ratings(batch_user)
 
+    def get_user_item_ratings(self, batch_user, item_idx)
+        return self.student.get_user_item_ratings(batch_user, item_idx)
 
 class BaseKD4CTR(BaseKD):
     def __init__(self, args, teacher, student, frozen_teacher=True):

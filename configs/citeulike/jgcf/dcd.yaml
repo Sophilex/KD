@@ -1,0 +1,13 @@
+  epochs: 1000
+  batch_size: 2048
+  lr: 1.e-4
+  wd: 1.e-3
+  lmbda: 0.01
+  
+  dcd_K: 200
+  dcd_T: 10
+  dcd_mxK: 400
+  dcd_L: 200
+
+  dcd_tau: 1
+  dcd_negx: 1
