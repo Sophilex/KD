@@ -666,11 +666,23 @@ class RRDVK(BaseKD4Rec):
         for user in range(self.num_users):
             self.mask[user, self.topk_dict[user]] = 0 # 把每个用户top mxk的interesting item以及交互过的item都mask掉,那么它们之后被采样的概率就是0了，剩余item的值都是1，会被等概率采样
         self.mask.requires_grad = False
+    
+    def item_idx_init(self):
+        # return initial item_idx for further calculation of model_variance
+        m1 = self.mask[: self.num_users // 2, :].cuda()
+        tmp1 = torch.multinomial(m1, self.L + self.extra, replacement=False)
+        del m1
 
+        m2 = self.mask[self.num_users // 2 : ,:].cuda()
+        tmp2 = torch.multinomial(m2, self.L + self.extra, replacement=False)
+        del m2
+        return torch.cat([tmp1, tmp2], 0)
+    
     def set_model_variance(self, model_variance, item_idx):
         self.model_variance = model_variance # user_num X (rrd_L + rrd_extra)
+        # print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
         self.item_idx = item_idx
-        self.model_variance += 1e-6
+        self.model_variance = self.model_variance + 1e-6
 
 
     def get_topk_dict(self):
@@ -712,9 +724,10 @@ class RRDVK(BaseKD4Rec):
             
 
             # uninteresting items
-
-            mask_mat = torch.gather(self.mask, dim = -1, idx = self.item_idx) * self.model_variance
-
+            # print(f"vaisualize: mask:{self.mask.shape}, item_idx:{self.item_idx.dtype}, model_variance:{self.model_variance.shape}")
+            mask_mat = torch.gather(self.mask, dim = 1, index = self.item_idx) * self.model_variance
+            print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
+            
             # 其实这里直接合起来似乎也没事，因为mask_mat的宽度只有rrd_L + rrd_extra
             m1 = mask_mat[: self.num_users // 2, :].cuda()
             tmp1 = torch.multinomial(m1, self.L, replacement=False)
@@ -729,13 +742,17 @@ class RRDVK(BaseKD4Rec):
 
             # extra items
             mask_cp = self.mask.clone()
-            mask_cp[torch.arange(self.uninteresting_items.size(0)), self.uninteresting_items] = 0
-            extra_items = torch.multinomial(mask_cp, self.extra, replacement = False) # user_num X self.extra
+            # print(f"visualize: mask_cp {mask_cp.shape}, self.uninteresting_items {self.uninteresting_items.shape}")
+            mask_cp[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
+            self.extra_items = torch.multinomial(mask_cp, self.extra, replacement = False) # user_num X self.extra
             del mask_cp
 
+            
 
-    def reset_item():
-        return torch.cat([self.underestimated_items, extra_items]) # user_num X (self.L + self.extra)
+
+    def reset_item(self):
+        # print(f"visual extra_items shape: {self.extra_items.dtype}, uninteresting_items shape: {self.uninteresting_items.shape}")
+        return torch.cat([self.uninteresting_items, self.extra_items], dim = 1) # user_num X (self.L + self.extra)
 
     def relaxed_ranking_loss(self, S1, S2, S3):
         

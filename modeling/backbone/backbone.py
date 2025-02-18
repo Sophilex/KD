@@ -109,6 +109,14 @@ class BPR(BaseRec):
         score_mat = torch.matmul(users, items.T)
         return score_mat
 
+    def get_user_item_ratings(self, batch_user, item_idx):
+        # user_items: 用户要计算的item num_batch_user X num_batch_item
+        users, items = self.get_all_embedding()
+        users = users[batch_user] # num_user X dim
+
+        score = torch.matmul(users.unsqueeze(1), items[item_idx].transpose(1, 2)) # num_batch_user X num_batch_item
+        return score.squeeze(1)
+
 
 class LightGCN(BaseGCN):
     def __init__(self, dataset, args):

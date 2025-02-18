@@ -26,6 +26,9 @@ class BaseKD(nn.Module):
     
     def get_ratings(self, param):
         raise NotImplementedError
+    
+    def get_user_item_ratings(self, batch_user, item_idx):
+        raise NotImplementedError
 
     def do_something_in_each_epoch(self, epoch):
         return
@@ -70,7 +73,7 @@ class BaseKD4Rec(BaseKD):
     def get_ratings(self, batch_user):
         return self.student.get_ratings(batch_user)
 
-    def get_user_item_ratings(self, batch_user, item_idx)
+    def get_user_item_ratings(self, batch_user, item_idx):
         return self.student.get_user_item_ratings(batch_user, item_idx)
 
 class BaseKD4CTR(BaseKD):

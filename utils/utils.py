@@ -243,7 +243,7 @@ class Var_calcer:
         self.num_users = data_loader.dataset.num_users
         self.num_items = data_loader.dataset.num_items
         self.rating_history = torch.zeros((self.num_users, args.rrd_L + args.rrd_extra), dtype=torch.float32).cuda()
-        self.item_idx = torch.zeros((self.num_users, args.rrd_L + args.rrd_extra), dtype=torch.int).cuda()
+        self.item_idx = torch.zeros((self.num_users, args.rrd_L + args.rrd_extra), dtype=torch.int64).cuda()
         self.rating_square = torch.zeros((self.num_users, args.rrd_L + args.rrd_extra), dtype=torch.float32).cuda()
         self.rating_variance = torch.zeros((self.num_users, args.rrd_L + args.rrd_extra), dtype=torch.float32).cuda()
         self.args = args
@@ -277,8 +277,14 @@ class Var_calcer:
         mean = self.rating_history / (epoch + 1)
         mean_square = self.rating_square / (epoch + 1)
         self.rating_variance = mean_square - mean ** 2
+        # min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
+        # min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
+        # min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
+        # print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
+
+
     
-    def check(self)
+    def check(self):
         min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
         min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
         min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值

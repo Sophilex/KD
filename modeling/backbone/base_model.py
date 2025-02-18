@@ -44,6 +44,9 @@ class BaseRec(nn.Module):
     def get_all_embedding(self):
         raise NotImplementedError
     
+    def get_user_item_ratings(self, batch_user, item_idx):
+        raise NotImplementedError
+    
     def get_loss(self, output):
         """Compute the loss function with the model output
 
@@ -174,8 +177,8 @@ class BaseGCN(BaseRec):
         #         ans.append(torch.matmul(users[i],items[user_item[i][j]]))
         #     score.append(ans)
 
-        score = torch.matmul(users, items[item_idx].transpose(1, 2)) # num_batch_user X num_batch_item
-        return score
+        score = torch.matmul(users.unsqueeze(1), items[item_idx].transpose(1, 2)) # num_batch_user X num_batch_item
+        return score.squeeze(1)
 
         
 

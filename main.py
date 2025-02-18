@@ -14,7 +14,7 @@ from dataset import load_cf_data, implicit_CF_dataset, implicit_CF_dataset_test
 from evaluation import Evaluator
 import modeling.backbone as backbone
 import modeling.KD as KD
-from utils import seed_all, avg_dict, Logger, Drawer, Var_calc
+from utils import seed_all, avg_dict, Logger, Drawer, Var_calc, Var_calcer
 
 def main(args):
     # Dataset
@@ -84,6 +84,12 @@ def main(args):
         variance_calculator = Var_calc(args, train_loader)  
         model_variance = variance_calculator.get_rating_variance()
         model.set_model_variance(model_variance)
+    
+    if args.model.lower() == "rrdvk":
+        variance_calculator = Var_calcer(args, train_loader, "per_calu_len")
+        model_variance, _ = variance_calculator.get_rating_variance()
+        item_idx = model.item_idx_init()
+        model.set_model_variance(model_variance, item_idx)
         # variance_calculator.update_rating_variance(model, 0) 
 
 
