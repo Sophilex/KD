@@ -3,6 +3,7 @@ __pycache__/
 
 checkpoints/
 logs/
+debug_log/
 **/*.txt
 **/*.csv
 **/*.pkl

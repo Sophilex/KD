@@ -726,7 +726,7 @@ class RRDVK(BaseKD4Rec):
             # uninteresting items
             # print(f"vaisualize: mask:{self.mask.shape}, item_idx:{self.item_idx.dtype}, model_variance:{self.model_variance.shape}")
             mask_mat = torch.gather(self.mask, dim = 1, index = self.item_idx) * self.model_variance
-            print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
+            print(f"Set mask_mat - min: {mask_mat.min()}, max: {mask_mat.max()}")
             
             # 其实这里直接合起来似乎也没事，因为mask_mat的宽度只有rrd_L + rrd_extra
             m1 = mask_mat[: self.num_users // 2, :].cuda()
