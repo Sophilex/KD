@@ -1,14 +1,20 @@
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.2
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.3
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.4
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.5
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.6
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.7
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.8
-# python main.py --dataset=citeulike --backbone=lightgcn --model=mrrd --gpu_id=1 --cfg mrrd_beta=0.9
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=2
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=1
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=3
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=5
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=10
 
-python main.py --dataset=citeulike --backbone=lightgcn --model=dcdvar --cfg dcd_negx=0.1
-python main.py --dataset=citeulike --backbone=lightgcn --model=dcdvar --cfg dcd_negx=0.5
-python main.py --dataset=citeulike --backbone=lightgcn --model=dcdvar --cfg dcd_negx=1.5
-python main.py --dataset=citeulike --backbone=lightgcn --model=dcdvar --cfg dcd_negx=2
-python main.py --dataset=citeulike --backbone=lightgcn --model=dcdvar --cfg dcd_negx=5
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=2 rrd_extra=9000
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=10 rrd_extra=9000
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=20 rrd_extra=9000
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=30 rrd_extra=9000
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvk --cfg rrd_neg=40 rrd_extra=9000
+
+python main.py --dataset=gowalla --backbone=lightgcn --train_teacher
+# python main.py --dataset=citeulike --backbone=simplex --model=rrdvk
+
+
+
+
+

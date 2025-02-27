@@ -536,7 +536,7 @@ class RRDVar(BaseKD4Rec):
         self.ranking_mat = ranking_list.repeat(self.num_users, 1) # 对每一个用户生成一个固定的interesting样本采样概率列表
 
         # For uninteresting item
-        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float).cuda()
+        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float)
         train_pairs = self.dataset.train_pairs
         self.mask[train_pairs[:, 0], train_pairs[:, 1]] = 0
         for user in range(self.num_users):
@@ -660,7 +660,7 @@ class RRDVK(BaseKD4Rec):
         self.ranking_mat = ranking_list.repeat(self.num_users, 1) # 对每一个用户生成一个固定的interesting样本采样概率列表
 
         # For uninteresting item
-        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float).cuda()
+        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float) # 没事不要把这么大的张量直接放进gpu...
         train_pairs = self.dataset.train_pairs
         self.mask[train_pairs[:, 0], train_pairs[:, 1]] = 0
         for user in range(self.num_users):
@@ -682,7 +682,7 @@ class RRDVK(BaseKD4Rec):
         self.model_variance = model_variance # user_num X (rrd_L + rrd_extra)
         # print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
         self.item_idx = item_idx
-        self.model_variance = self.model_variance + 1e-6
+        self.model_variance = self.model_variance + 1e-7
 
 
     def get_topk_dict(self):
@@ -724,31 +724,38 @@ class RRDVK(BaseKD4Rec):
             
 
             # uninteresting items
-            # print(f"vaisualize: mask:{self.mask.shape}, item_idx:{self.item_idx.dtype}, model_variance:{self.model_variance.shape}")
-            mask_mat = torch.gather(self.mask, dim = 1, index = self.item_idx) * self.model_variance
-            print(f"Set mask_mat - min: {mask_mat.min()}, max: {mask_mat.max()}")
-            
-            # 其实这里直接合起来似乎也没事，因为mask_mat的宽度只有rrd_L + rrd_extra
-            m1 = mask_mat[: self.num_users // 2, :].cuda()
-            tmp1 = torch.multinomial(m1, self.L, replacement=False)
-            del m1
+            num_parts = 16
+            chunk_size = self.num_users // num_parts
+            all_tmp = []
 
-            m2 = mask_mat[self.num_users // 2 : ,:].cuda()
-            tmp2 = torch.multinomial(m2, self.L, replacement=False)
-            del m2
+            for i in range(num_parts):
+                start_idx = i * chunk_size
+                end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
+                
+                m_part = self.model_variance[start_idx:end_idx, :].cuda()
+                tmp_part = torch.multinomial(m_part, self.L, replacement=False)
 
-            del mask_mat
-            self.uninteresting_items = torch.cat([tmp1, tmp2], 0)
+                all_tmp.append(tmp_part)
+                del m_part, tmp_part
+
+            self.uninteresting_items = torch.cat(all_tmp, 0)
 
             # extra items
-            mask_cp = self.mask.clone()
-            # print(f"visualize: mask_cp {mask_cp.shape}, self.uninteresting_items {self.uninteresting_items.shape}")
-            mask_cp[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
-            self.extra_items = torch.multinomial(mask_cp, self.extra, replacement = False) # user_num X self.extra
-            del mask_cp
+            all_tmp = []
+            self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
 
-            
+            for i in range(num_parts):
+                start_idx = i * chunk_size
+                end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
+                
+                m_part = self.mask[start_idx:end_idx, :].cuda()
+                tmp_part = torch.multinomial(m_part, self.extra, replacement=False)
 
+                all_tmp.append(tmp_part)
+                del m_part, tmp_part
+            self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 1
+            self.extra_items = torch.cat(all_tmp, 0)
+            del all_tmp
 
     def reset_item(self):
         # print(f"visual extra_items shape: {self.extra_items.dtype}, uninteresting_items shape: {self.uninteresting_items.shape}")
@@ -776,7 +783,6 @@ class RRDVK(BaseKD4Rec):
     def get_loss(self, batch_user, batch_pos_item, batch_neg_item):
         users = batch_user.unique()
         interesting_items, uninteresting_items = self.get_samples(users)
-
 
         interesting_items = interesting_items.type(torch.LongTensor).cuda()
         uninteresting_items = uninteresting_items.type(torch.LongTensor).cuda()

@@ -42,14 +42,15 @@
 # python main.py --dataset=citeulike --backbone=lightgcn --model=rrdvar --cfg rrd_neg=5
 
 
+
 # citeulike
 # python main.py --dataset=citeulike --backbone=bpr --model=rrdvar
-python main.py --dataset=citeulike --backbone=bpr --model=rrd
-python main.py --dataset=citeulike --backbone=bpr --model=dcd
+# python main.py --dataset=citeulike --backbone=bpr --model=rrd
+# python main.py --dataset=citeulike --backbone=bpr --model=dcd
 
-python main.py --dataset=citeulike --backbone=simplex --model=rrdvar
-python main.py --dataset=citeulike --backbone=simplex --model=rrd
-python main.py --dataset=citeulike --backbone=simplex --model=dcd
+# python main.py --dataset=citeulike --backbone=simplex --model=rrdvar
+# python main.py --dataset=citeulike --backbone=simplex --model=rrd
+# python main.py --dataset=citeulike --backbone=simplex --model=dcd
 
 # python main.py --dataset=citeulike --backbone=jgcf --model=rrdvar
 # python main.py --dataset=citeulike --backbone=jgcf --model=rrd
@@ -57,13 +58,13 @@ python main.py --dataset=citeulike --backbone=simplex --model=dcd
 
 
 # gowalla
-python main.py --dataset=gowalla --backbone=bpr --model=rrdvar
-python main.py --dataset=gowalla --backbone=bpr --model=rrd
-python main.py --dataset=gowalla --backbone=bpr --model=dcd
+# python main.py --dataset=gowalla --backbone=bpr --model=rrdvar
+# python main.py --dataset=gowalla --backbone=bpr --model=rrd
+# python main.py --dataset=gowalla --backbone=bpr --model=dcd
 
-python main.py --dataset=gowalla --backbone=simplex --model=rrdvar
-python main.py --dataset=gowalla --backbone=simplex --model=rrd
-python main.py --dataset=gowalla --backbone=simplex --model=dcd
+# python main.py --dataset=gowalla --backbone=simplex --model=rrdvar
+# python main.py --dataset=gowalla --backbone=simplex --model=rrd
+# python main.py --dataset=gowalla --backbone=simplex --model=dcd
 
 # python main.py --dataset=gowalla --backbone=jgcf --model=rrdvar
 # python main.py --dataset=gowalla --backbone=jgcf --model=rrd
@@ -71,19 +72,20 @@ python main.py --dataset=gowalla --backbone=simplex --model=dcd
 
 
 # yelp
-python main.py --dataset=yelp --backbone=bpr --model=rrdvar
-python main.py --dataset=yelp --backbone=bpr --model=rrd
-python main.py --dataset=yelp --backbone=bpr --model=dcd
+# python main.py --dataset=yelp --backbone=bpr --model=rrdvar
+# python main.py --dataset=yelp --backbone=bpr --model=rrd
+# python main.py --dataset=yelp --backbone=bpr --model=dcd
 
-python main.py --dataset=yelp --backbone=simplex --model=rrdvar
-python main.py --dataset=yelp --backbone=simplex --model=rrd
-python main.py --dataset=yelp --backbone=simplex --model=dcd
+# python main.py --dataset=yelp --backbone=simplex --model=rrdvar
+# python main.py --dataset=yelp --backbone=simplex --model=rrd
+# python main.py --dataset=yelp --backbone=simplex --model=dcd
 
 # python main.py --dataset=yelp --backbone=jgcf --model=rrdvar
 # python main.py --dataset=yelp --backbone=jgcf --model=rrd
 # python main.py --dataset=yelp --backbone=jgcf --model=dcd
 
 
+python main.py --dataset=citeulike --backbone=bpr --model=dcd
 
 
 

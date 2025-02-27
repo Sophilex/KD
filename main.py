@@ -91,6 +91,11 @@ def main(args):
         item_idx = model.item_idx_init()
         model.set_model_variance(model_variance, item_idx)
         # variance_calculator.update_rating_variance(model, 0) 
+    
+    ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
+    drawer = None
+    if args.draw_student:
+        drawer = Drawer(args, args.draw_mxK, ccdf_path)
 
 
     for epoch in range(args.epochs):
@@ -118,6 +123,7 @@ def main(args):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            torch.cuda.empty_cache() # clear memory
             epoch_loss.append(loss.detach())
             epoch_base_loss.append(base_loss)
             epoch_kd_loss.append(kd_loss)
@@ -157,14 +163,13 @@ def main(args):
                 best_epoch = epoch
         
         if epoch % 50 == 0 and epoch != 0 and args.draw_student:
-            ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
-            drawer = Drawer(args, args.rrd_mxK, ccdf_path)
-            drawer.plot_CCDF4negs(model, train_loader, validset, testset, "student-ccdf-{}.png".format(epoch))
+            drawer.plot_CCDF4negs(model, train_loader, validset, testset, "epoch {}".format(epoch))
         
         # save intermediate checkpoints
         if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
             ckpts.append(deepcopy(model.param_to_save))
-    
+    if args.draw_student:
+        drawer.plot_all("student-ccdf.png")
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
     Evaluator.print_final_result(ans_logger, eval_dict)

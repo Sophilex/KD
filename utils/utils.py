@@ -113,6 +113,12 @@ class Drawer:
         self.path = path
         os.makedirs(self.path, exist_ok=True)
 
+        #  多轮画图
+        self.x_axis_lst = []
+        self.label_lst = []
+        self.y_axis_lst = []
+
+
     
     def gt_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset):
         """
@@ -131,7 +137,7 @@ class Drawer:
             topK_neg_items = torch.zeros((num_users, num_items - adjusted_mxK), dtype=torch.float).cuda()
 
             for batch_user in test_loader:
-                inter_mat = model.teacher.get_ratings(batch_user) # 负样本由教师定义
+                inter_mat = model.get_ratings(batch_user)
                 # np.savetxt("inter_mat.txt", np.sort(inter_mat[0].cpu().numpy()))
                 # for idx, user in enumerate(batch_user):
                 #     pos = train_dict[user.item()]
@@ -149,12 +155,36 @@ class Drawer:
         ccdf = (len(prob) - np.arange(1, len(prob) + 1)) / len(prob)
         return prob, ccdf
     
-    def plot_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, filename):
+    def plot_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, label):
         prob, ccdf = self.gt_CCDF4negs(model, train_loader, valid_dataset, test_dataset)
+        # plt.plot(prob, ccdf, label=label)
+        # plt.savefig(os.path.join(self.path, label))
+        self.add(prob, ccdf, label)
+    
+    def add(self, x_axis, y_axis, label):
+        self.x_axis_lst.append(x_axis)
+        self.y_axis_lst.append(y_axis)
+        self.label_lst.append(label)
+    
+    def plot_all(self, filename):
+        print(len(self.x_axis_lst))
+        # 找到所有曲线的最小和最大 x 值
+        all_x = [x for lst in self.x_axis_lst for x in lst]
+        x_min, x_max = min(all_x), max(all_x)
+        
+        # plt.figure(figsize=(8, 6))
+        
+        for i in range(len(self.x_axis_lst)):
+            # 将所有的 x 轴限制在统一范围内
+            plt.plot(self.x_axis_lst[i], self.y_axis_lst[i], label=self.label_lst[i])
 
-        plt.plot(prob, ccdf)
-        plt.margins(x=0, y=0)  # 同时消除x轴和y轴的空隙
-
+        plt.xlim(x_min, x_max)
+        plt.xlabel('P_pos')
+        plt.ylabel('CCDF')
+        plt.legend()
+        plt.grid(True)
+        plt.margins(x=0, y=0)
+        
         final_path = os.path.join(self.path, filename)
         plt.savefig(final_path)
 
@@ -274,21 +304,16 @@ class Var_calcer:
     def update_rating_variance(self, model, epoch):
         self.update_ratings(model)
         # 这里可以时间换内存 需要时修改
-        mean = self.rating_history / (epoch + 1)
-        mean_square = self.rating_square / (epoch + 1)
-        self.rating_variance = mean_square - mean ** 2
-        # min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
-        # min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
-        # min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
-        # print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
-
-
+        self.rating_history /= (epoch + 1)
+        self.rating_variance = self.rating_square / (epoch + 1)
+        self.rating_variance -= self.rating_history ** 2
+        self.rating_history *= (epoch + 1) # 还原
     
-    def check(self):
-        min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
-        min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
-        min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
-        print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
+    # def check(self):
+    #     min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
+    #     min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
+    #     min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
+    #     print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
 
     def get_rating_variance(self):
         return self.rating_variance, self.item_idx

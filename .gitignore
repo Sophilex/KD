@@ -23,3 +23,5 @@ figs/
 *_val
 *_test
 *.cache
+
+*.sh
