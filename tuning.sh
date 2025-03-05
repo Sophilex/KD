@@ -85,7 +85,14 @@
 # python main.py --dataset=yelp --backbone=jgcf --model=dcd
 
 
-python main.py --dataset=citeulike --backbone=bpr --model=dcd
+python main.py --dataset=gowalla --backbone=lightgcn --model=rrdvk
+python main.py --dataset=gowalla --backbone=lightgcn --model=rrdvk --cfg alpha=0.5
+python main.py --dataset=gowalla --backbone=lightgcn --model=rrdvk --cfg alpha=0.1
+python main.py --dataset=gowalla --backbone=lightgcn --model=rrdvk --cfg alpha=1.5
+python main.py --dataset=gowalla --backbone=lightgcn --model=rrdvk --cfg alpha=2
+
+
+
 
 
 

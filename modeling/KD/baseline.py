@@ -653,6 +653,8 @@ class RRDVK(BaseKD4Rec):
         self.unselected = args.rrd_unselected
         self.neg = args.rrd_neg
         self.calu_len = args.calu_len
+        self.mode = args.mode
+        self.alpha = args.alpha
 
         # For interesting item
         self.get_topk_dict()
@@ -682,7 +684,7 @@ class RRDVK(BaseKD4Rec):
         self.model_variance = model_variance # user_num X (rrd_L + rrd_extra)
         # print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
         self.item_idx = item_idx
-        self.model_variance = self.model_variance + 1e-7
+        self.model_variance = self.model_variance + 1e-6
 
 
     def get_topk_dict(self):
@@ -695,7 +697,6 @@ class RRDVK(BaseKD4Rec):
             _, self.topk_dict = torch.topk(inter_mat, self.mxK, dim=-1) # self.num_users X self.mxK， 去掉了已经交互过的user-item对, 返回每行topmaxK的idx
     
     def get_samples(self, batch_user):
-
         interesting_samples = torch.index_select(self.interesting_items, 0, batch_user)
         uninteresting_samples = torch.index_select(self.uninteresting_items, 0, batch_user)
         self.potential_interesting_items = torch.index_select(self.topk_dict, 0, batch_user)
@@ -728,13 +729,34 @@ class RRDVK(BaseKD4Rec):
             chunk_size = self.num_users // num_parts
             all_tmp = []
 
+            # different sample mode
+            targt = None
+            if self.mode.lower == "val_diff":
+                # add val information between S and T
+                T_pred = self.teacher.get_user_item_ratings(torch.arange(self.num_users), self.item_idx)
+                S_pred = self.student.get_user_item_ratings(torch.arange(self.num_users), self.item_idx)
+                targt = (T_pred - S_pred) * self.mask
+                del T_pred, S_pred
+            elif self.mode.lower == "val_T":
+                # add Teacher's val information
+                T_pred = self.teacher.get_user_item_ratings(torch.arange(self.num_users), self.item_idx)
+                targt = T_pred * self.mask
+                del T_pred
+            else: 
+                # add no val informatio
+                targt = torch.zeros_like(self.model_variance)
+
+
             for i in range(num_parts):
                 start_idx = i * chunk_size
                 end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
                 
-                m_part = self.model_variance[start_idx:end_idx, :].cuda()
-                tmp_part = torch.multinomial(m_part, self.L, replacement=False)
-
+                m_part = self.model_variance[start_idx:end_idx, :].cuda().softmax(dim=1)
+                tar_part = targt[start_idx:end_idx, :].cuda().softmax(dim=1)
+                if self.mode == "val_diff" or self.mode == "val_T":
+                    tmp_part = torch.multinomial(tar_part + self.alpha * m_part, self.L, replacement=False)
+                else:
+                    tmp_part = torch.multinomial(m_part, self.L, replacement=False)
                 all_tmp.append(tmp_part)
                 del m_part, tmp_part
 

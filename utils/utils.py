@@ -281,7 +281,8 @@ class Var_calcer:
         self.batch_size = 256
         self.calu_len = args.calu_len
         self.mode = mode # 采样方式
-
+        self.cur_epoch = 0
+        self.rescale = 1000
 
 
     def update_ratings(self, model):
@@ -290,6 +291,7 @@ class Var_calcer:
                 end_idx = min(start_idx + self.batch_size, self.num_users)
                 batch_user = torch.arange(start_idx, end_idx)
                 inter_mat = model.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                inter_mat *= self.rescale
                 self.rating_history[batch_user, :] += inter_mat
                 self.rating_square[batch_user, :] += inter_mat ** 2
 
@@ -299,22 +301,40 @@ class Var_calcer:
         self.item_idx = item_idx.cuda()
         self.rating_square.zero_() # 原地置0
         self.rating_history.zero_()
+        self.cur_epoch = 0 # cur_epoch是相对的，及时更新
 
 
-    def update_rating_variance(self, model, epoch):
+    def update_rating_variance(self, model):
         self.update_ratings(model)
+        self.cur_epoch += 1
+        # print("epoch: {}".format(self.cur_epoch))
         # 这里可以时间换内存 需要时修改
-        self.rating_history /= (epoch + 1)
-        self.rating_variance = self.rating_square / (epoch + 1)
+        self.rating_history /= self.cur_epoch
+        self.rating_variance = self.rating_square / self.cur_epoch
         self.rating_variance -= self.rating_history ** 2
-        self.rating_history *= (epoch + 1) # 还原
+        self.rating_variance = torch.clamp(self.rating_variance, min=0.0)  # 负值截断
+        self.rating_history *= self.cur_epoch # 还原
+        # self.check()
     
-    # def check(self):
-    #     min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
-    #     min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
-    #     min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
-    #     print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
+    def check(self):
+        min_variance_index_flat = np.argmin(self.rating_variance.cpu().numpy())
+        min_variance_index = np.unravel_index(min_variance_index_flat, self.rating_variance.shape)
+        min_variance_value = self.rating_variance[min_variance_index]  # 获取对应的值
+        print(f"Min variance index: {min_variance_index}, Value: {min_variance_value.item()}, rating_history: {self.rating_history[min_variance_index]}, rating_square: {self.rating_square[min_variance_index]}")
 
     def get_rating_variance(self):
-        return self.rating_variance, self.item_idx
+        return self.rating_variance.detach(), self.item_idx
+
+    # def get_rating_variance(self):
+    #     epoch_plus_1 = self.current_epoch + 1
+    #     var = torch.zeros_like(self.rating_history, dtype=torch.float16)  # 半精度存储结果
+    #     # 分批次计算方差，避免峰值显存
+    #     for start in range(0, self.num_users, self.batch_size):
+    #         end = min(start + self.batch_size, self.num_users)
+    #         hist = self.rating_history[start:end].float()  # 转float32计算避免精度丢失
+    #         sq = self.rating_square[start:end].float()
+    #         mean = hist / epoch_plus_1
+    #         batch_var = (sq / epoch_plus_1) - (mean ** 2)
+    #         var[start:end] = batch_var.half()  # 转回半精度存储
+    #     return var, self.item_idx
 

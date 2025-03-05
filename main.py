@@ -142,14 +142,13 @@ def main(args):
                 model.set_model_variance(model_variance, cur_idx) 
                 variance_calculator.reset(feature_idx)
 
-            variance_calculator.update_rating_variance(model, epoch)
+            variance_calculator.update_rating_variance(model)
 
         if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
             # print(f"update variance... - epoch: {epoch + 1}")
             variance_calculator.update_rating_variance(model, epoch)
             model_variance = variance_calculator.get_rating_variance()
             model.set_model_variance(model_variance)
-
 
         # evaluation
         if epoch % args.eval_period == 0:
