@@ -1,16 +1,14 @@
 epochs: 1000
-batch_size: 4096
+batch_size: 2048
 lr: 1.e-3
-wd: 1.e-3
-lmbda: 0.005
+wd: 1.e-5
+lmbda: 0.01
 
-rrd_K: 100
-rrd_L: 200
-rrd_T: 100
+rrd_K: 50
+rrd_L: 100
+rrd_T: 10
 rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
 rrd_extra: 8000
-mode: "val_diff"
-alpha: 1

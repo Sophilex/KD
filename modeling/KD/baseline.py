@@ -725,7 +725,7 @@ class RRDVK(BaseKD4Rec):
             
 
             # uninteresting items
-            num_parts = 16
+            num_parts = 256
             chunk_size = self.num_users // num_parts
             all_tmp = []
 
@@ -764,7 +764,11 @@ class RRDVK(BaseKD4Rec):
 
             # extra items
             all_tmp = []
+            self.targt = None
             self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
+            T_pred = self.teacher.get_all_ratings() # teacher得到的user-item分数s矩阵
+            S_pred = self.student.get_all_ratings() # student得到的user-item分数s矩阵
+
 
             for i in range(num_parts):
                 start_idx = i * chunk_size

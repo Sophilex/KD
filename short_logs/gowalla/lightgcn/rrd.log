@@ -53,3 +53,230 @@ rrd_L                                    40
 rrd_T                                    10
 rrd_mxK                                  500
 ----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               4
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    rrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+rrd_K                                    50
+rrd_L                                    100
+rrd_T                                    10
+rrd_mxK                                  500
+rrd_unselected                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               4
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    rrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+rrd_K                                    50
+rrd_L                                    100
+rrd_T                                    10
+rrd_mxK                                  500
+rrd_unselected                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               4
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   3
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    rrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+rrd_K                                    50
+rrd_L                                    100
+rrd_T                                    10
+rrd_mxK                                  500
+rrd_unselected                           0
+----------------------------------------ARGUMENTS----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               4
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               4
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   3
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  gowalla
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    rrd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+rrd_K                                    50
+rrd_L                                    100
+rrd_T                                    10
+rrd_mxK                                  500
+rrd_unselected                           0
+----------------------------------------ARGUMENTS----------------------------------------
+03/02/2025,20:43:08: ------------------------------
+03/02/2025,20:43:08: valid Recall@10: 0.12199 Recall@20: 0.17042 NDCG@10: 0.09187 NDCG@20: 0.10642
+03/02/2025,20:43:08: test Recall@10: 0.11381 Recall@20: 0.15931 NDCG@10: 0.09576 NDCG@20: 0.10998

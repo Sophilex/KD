@@ -8,6 +8,12 @@ teacher:
   simplex_max_len: 500
   simplex_negative_weight: 100
   simplex_enable_bias: False
+  num_ns: 2000
+  batch_size: 256
+  lr: 1e-4
+  wd: 1e-8
+  lmbda: 1.0
+  
 student:
   init_std: 1.e-4
   embedding_dim: 20
