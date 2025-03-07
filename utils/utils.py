@@ -106,21 +106,21 @@ class Logger:
             self.log('{:40} {}'.format(arg, getattr(args, arg)), pre=False)
         self.log('-' * 40 + text + '-' * 40, pre=False)
 
-
+ 
 class Drawer:
-    def __init__(self, args, mxK, path):
-        self.mxK = mxK
+    def __init__(self, args, path):
         self.path = path
         os.makedirs(self.path, exist_ok=True)
+        self.batch_size = 256
+        self.type = args.draw_type
 
         #  多轮画图
         self.x_axis_lst = []
         self.label_lst = []
         self.y_axis_lst = []
 
-
     
-    def gt_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset):
+    def gt_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, mxK):
         """
         for particular user, calculate the CCDF for negative items
         """
@@ -133,7 +133,7 @@ class Drawer:
         with torch.no_grad():
 
             test_loader = data.DataLoader(list(test_dict.keys()), batch_size=train_loader.batch_size)
-            adjusted_mxK = self.mxK
+            adjusted_mxK = mxK
             topK_neg_items = torch.zeros((num_users, num_items - adjusted_mxK), dtype=torch.float).cuda()
 
             for batch_user in test_loader:
@@ -155,18 +155,45 @@ class Drawer:
         ccdf = (len(prob) - np.arange(1, len(prob) + 1)) / len(prob)
         return prob, ccdf
     
-    def plot_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, label):
+    def plot_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, label, mxK):
         prob, ccdf = self.gt_CCDF4negs(model, train_loader, valid_dataset, test_dataset)
         # plt.plot(prob, ccdf, label=label)
         # plt.savefig(os.path.join(self.path, label))
         self.add(prob, ccdf, label)
+
+    def gt_CDF4negs(self, rating_variance):
+        """
+        Calculate the average rating variance across users and its CDF.
+
+        Args:
+            rating_variance: A 2D matrix of shape (num_users, num_items),
+                            where rating_variance[i, j] is the predicted variance
+                            of user i for item j.
+        Returns:
+            avg_rating_variance: The average rating variance across users.
+            cdf: The CDF of the average rating variance.
+        """
+        num_users, num_items = rating_variance.shape
+
+        rating_variance = torch.softmax(rating_variance, dim = -1).mean(dim = 0) # 1 X num_items
+        rating_variance = rating_variance.cpu().numpy() 
+        sorted_variance = np.sort(rating_variance)
+
+        cdf = np.arange(1, num_items + 1) / (num_items + 1)
+        return sorted_variance, cdf
+
+    
+    def plot_CDF4negs(self, rating_variance, label):
+        prob, cdf = self.gt_CDF4negs(rating_variance)
+        self.add(prob, cdf, label)
+
     
     def add(self, x_axis, y_axis, label):
         self.x_axis_lst.append(x_axis)
         self.y_axis_lst.append(y_axis)
         self.label_lst.append(label)
     
-    def plot_all(self, filename):
+    def plot_all(self, filename, x_name, y_name):
         print(len(self.x_axis_lst))
         # 找到所有曲线的最小和最大 x 值
         all_x = [x for lst in self.x_axis_lst for x in lst]
@@ -179,12 +206,11 @@ class Drawer:
             plt.plot(self.x_axis_lst[i], self.y_axis_lst[i], label=self.label_lst[i])
 
         plt.xlim(x_min, x_max)
-        plt.xlabel('P_pos')
-        plt.ylabel('CCDF')
+        plt.xlabel(x_name)
+        plt.ylabel(y_name)
         plt.legend()
         plt.grid(True)
         plt.margins(x=0, y=0)
-        
         final_path = os.path.join(self.path, filename)
         plt.savefig(final_path)
 

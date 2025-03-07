@@ -70,8 +70,8 @@ def main(args):
 
         if args.draw_teacher:
             ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
-            drawer = Drawer(args, args.rrd_mxK, ccdf_path)
-            drawer.plot_CCDF4negs(tmp_model, train_loader, validset, testset, "teacher-ccdf.png")
+            drawer = Drawer(args, ccdf_path)
+            drawer.plot_CCDF4negs(tmp_model, train_loader, validset, testset, "teacher-ccdf.png", args.draw_mxK)
             return
 
 
@@ -85,7 +85,7 @@ def main(args):
         model_variance = variance_calculator.get_rating_variance()
         model.set_model_variance(model_variance)
     
-    if args.model.lower() == "rrdvk":
+    if "rrdvk" in args.model.lower():
         variance_calculator = Var_calcer(args, train_loader, "per_calu_len")
         model_variance, _ = variance_calculator.get_rating_variance()
         item_idx = model.item_idx_init()
@@ -95,7 +95,7 @@ def main(args):
     ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
     drawer = None
     if args.draw_student:
-        drawer = Drawer(args, args.draw_mxK, ccdf_path)
+        drawer = Drawer(args, ccdf_path)
 
 
     for epoch in range(args.epochs):
@@ -135,13 +135,15 @@ def main(args):
         toc1 = time.time()
 
         # update variance
-        if args.model.lower() == "rrdvk":
+        if "rrdvk" in args.model.lower():
             if epoch % args.calu_len == 0:
                 feature_idx = model.reset_item() # 后续需要计算的user-item对的方差
                 model_variance, cur_idx = variance_calculator.get_rating_variance() # 前几轮计算得到的方差
+                if epoch % 50 == 0 and epoch != 0 and args.draw_student and args.draw_type.lower() == "cdf":
+                    print("CDFing")
+                    drawer.plot_CDF4negs(model_variance, f"epoch {epoch}")
                 model.set_model_variance(model_variance, cur_idx) 
                 variance_calculator.reset(feature_idx)
-
             variance_calculator.update_rating_variance(model)
 
         if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
@@ -161,14 +163,14 @@ def main(args):
                 best_model = deepcopy(model.param_to_save)
                 best_epoch = epoch
         
-        if epoch % 50 == 0 and epoch != 0 and args.draw_student:
-            drawer.plot_CCDF4negs(model, train_loader, validset, testset, "epoch {}".format(epoch))
+        if epoch % 50 == 0 and epoch != 0 and args.draw_student and args.draw_type.lower() == "ccdf":
+            drawer.plot_CCDF4negs(model, train_loader, validset, testset, "epoch {}".format(epoch), args.draw_mxK)
         
         # save intermediate checkpoints
         if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
             ckpts.append(deepcopy(model.param_to_save))
     if args.draw_student:
-        drawer.plot_all("student-ccdf.png")
+        drawer.plot_all(f"student-{args.draw_type.lower()}.png")
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
     Evaluator.print_final_result(ans_logger, eval_dict)

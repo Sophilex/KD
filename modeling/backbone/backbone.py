@@ -258,8 +258,9 @@ class LightGCN(BaseGCN):
         # user_items: 用户要计算的item num_batch_user X num_batch_item
         users, items = self.get_all_embedding()
         users = users[batch_user] # num_user X dim
+        items = items[item_idx]
 
-        score = torch.matmul(users.unsqueeze(1), items[item_idx].transpose(1, 2)) # num_batch_user X num_batch_item
+        score = torch.matmul(users.unsqueeze(1), items.transpose(1, 2)) # num_batch_user X num_batch_item
         return score.squeeze(1)
 
 class JGCF(LightGCN):

@@ -11,4 +11,6 @@ rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
-rrd_extra: 8000
+rrd_extra: 5000
+mode: "val_diff"
+alpha: 1
