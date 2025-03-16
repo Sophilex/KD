@@ -213,7 +213,27 @@ class Drawer:
         plt.margins(x=0, y=0)
         final_path = os.path.join(self.path, filename)
         plt.savefig(final_path)
+    
+    def plot_sample(self, x, num_users, num_items, filename, x_name, y_name):
+        nonzero_samples = [x[i][x[i] > 0] for i in range(num_users)]  # 取出每个用户非零项
+        max_count = x.max().item()  # 找到最大采样次数，决定分布范围
+        all_distributions = torch.zeros((num_users, max_count + 1)).cpu()  # 记录每个用户的采样分布
 
+        for i in range(num_users):
+            if len(nonzero_samples[i]) > 0:
+                values, counts = torch.unique(nonzero_samples[i], return_counts=True)  # 统计每个采样次数的频率
+                values, counts = values.cpu(), counts.cpu()
+                all_distributions[i, values] = counts.float() / counts.sum()  # 归一化为概率分布
+        
+        avg_distribution = all_distributions.mean(dim=0)
+        plt.figure(figsize=(8, 5))
+        plt.plot(range(1, max_count + 1), avg_distribution.numpy()[1:], marker='o', linestyle='-')
+        plt.xlabel("sample_num")
+        plt.ylabel("probability")
+        plt.grid(True)
+        plt.show()
+        final_path = os.path.join(self.path, filename)
+        plt.savefig(final_path)
 
 class Var_calc:
     def __init__(self, args, data_loader):
@@ -308,7 +328,7 @@ class Var_calcer:
         self.calu_len = args.calu_len
         self.mode = mode # 采样方式
         self.cur_epoch = 0
-        self.rescale = 1000
+        self.rescale = 10
 
 
     def update_ratings(self, model):

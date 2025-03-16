@@ -1,101 +1,228 @@
-class RRD(BaseKD4Rec):
-    def __init__(self, args, teacher, student):
-        super().__init__(args, teacher, student)
-        self.model_name = "rrd"
-        self.K = args.rrd_K
-        self.L = args.rrd_L
-        self.T = args.rrd_T
-        self.mxK = args.rrd_mxK
-        self.sample_from_score = args.sample_from_score
-        self.no_sort = args.no_sort
+import os
+import time
+import mlflow
+import pickle
+import numpy as np
+from copy import deepcopy
 
-        # For interesting item
-        self.get_topk_dict()
-        if self.sample_from_score:
-            self.ranking_mat = torch.softmax(self.top_score / self.T, dim=-1)
+import torch
+import torch.optim as optim
+from torch.utils.data import DataLoader
+
+from parse import *
+from dataset import load_cf_data, implicit_CF_dataset, implicit_CF_dataset_test
+from evaluation import Evaluator
+import modeling.backbone as backbone
+import modeling.KD as KD
+from utils import seed_all, avg_dict, Logger, Drawer, Var_calc, Var_calcer
+
+def main(args):
+    # Dataset
+    num_users, num_items, train_pairs, valid_pairs, test_pairs, train_dict, valid_dict, test_dict, train_matrix, user_pop, item_pop = load_cf_data(args.dataset)
+    trainset = implicit_CF_dataset(args.dataset, num_users, num_items, train_pairs, train_matrix, train_dict, user_pop, item_pop, args.num_ns, args.neg_sampling_on_all)
+    validset = implicit_CF_dataset_test(num_users, num_items, valid_dict)
+    testset = implicit_CF_dataset_test(num_users, num_items, test_dict)
+    train_loader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True)
+
+    # Backbone
+    all_backbones = [e.lower() for e in dir(backbone)]
+    if args.backbone.lower() in all_backbones:
+        all_teacher_args, all_student_args = deepcopy(args), deepcopy(args)
+        all_teacher_args.__dict__.update(teacher_args.__dict__)
+        all_student_args.__dict__.update(student_args.__dict__)
+        Teacher = getattr(backbone, dir(backbone)[all_backbones.index(args.backbone.lower())])(trainset, all_teacher_args).cuda()
+        Student = getattr(backbone, dir(backbone)[all_backbones.index(args.backbone.lower())])(trainset, all_student_args).cuda()
+    else:
+        logger.log(f'Invalid backbone {args.backbone}.')
+        raise(NotImplementedError, f'Invalid backbone {args.backbone}.')
+
+    if args.model.lower() == "scratch":
+        if args.train_teacher:
+            model = KD.Scratch(args, Teacher).cuda()
         else:
-            ranking_list = torch.exp(-(torch.arange(self.mxK) + 1) / self.T)
-            self.ranking_mat = ranking_list.repeat(self.num_users, 1)
+            model = KD.Scratch(args, Student).cuda()
+    else:
+        T_path = os.path.join("checkpoints", args.dataset, args.backbone, f"scratch-{teacher_args.embedding_dim}", "BEST_EPOCH.pt")
+        Teacher.load_state_dict(torch.load(T_path))
+        all_models = [e.lower() for e in dir(KD)]
+        if args.model.lower() in all_models:
+            model = getattr(KD, dir(KD)[all_models.index(args.model.lower())])(args, Teacher, Student).cuda()
+        else:
+            logger.log(f'Invalid model {args.model}.')
+            raise(NotImplementedError, f'Invalid model {args.model}.')
 
-        # For uninteresting item
-        self.mask = torch.ones((self.num_users, self.num_items))
-        train_pairs = self.dataset.train_pairs
-        self.mask[train_pairs[:, 0], train_pairs[:, 1]] = 0
-        for user in range(self.num_users):
-            self.mask[user, self.topk_dict[user]] = 0
-        self.mask.requires_grad = False
+    # Optimizer
+    optimizer = optim.Adam(model.get_params_to_update())
 
-    def get_topk_dict(self):
-        print('Generating Top-K dict...')
-        with torch.no_grad():
-            inter_mat = self.teacher.get_all_ratings()
-            train_pairs = self.dataset.train_pairs
-            # remove true interactions from topk_dict
-            inter_mat[train_pairs[:, 0], train_pairs[:, 1]] = -1e6
-            self.top_score, self.topk_dict = torch.topk(inter_mat, self.mxK, dim=-1)
+    # Evaluator
+    evaluator = Evaluator(args)
+    best_model, best_epoch = deepcopy(model.param_to_save), -1
+    ckpts = []
+
+    # Test Teacher first
+    if args.model.lower() != "scratch":
+        logger.log('-' * 40 + "Teacher" + '-' * 40, pre=False)
+        tmp_evaluator = Evaluator(args)
+        tmp_model = KD.Scratch(args, Teacher).cuda()
+        is_improved, early_stop, eval_results, elapsed = tmp_evaluator.evaluate_while_training(tmp_model, -1, train_loader, validset, testset)
+        Evaluator.print_final_result(logger, tmp_evaluator.eval_dict)
+        logger.log('-' * 88, pre=False)
+
+        if args.draw_teacher:
+            ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
+            drawer = Drawer(args, ccdf_path)
+            drawer.plot_CCDF4negs(tmp_model, train_loader, validset, testset, "teacher-ccdf.png", args.draw_mxK)
+            return
+
+
+        # get distribution of teacher's predictions
     
-    def get_samples(self, batch_user):
+    # get the variance of users' predictions within each epoch
+    model_variance = None
+    variance_calculator = None
+    if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
+        variance_calculator = Var_calc(args, train_loader)  
+        model_variance = variance_calculator.get_rating_variance()
+        model.set_model_variance(model_variance)
+    
+    if "rrdvk" in args.model.lower():
+        variance_calculator = Var_calcer(args, train_loader, "per_calu_len")
+        model_variance, _ = variance_calculator.get_rating_variance()
+        item_idx = model.item_idx_init()
+        model.set_model_variance(model_variance, item_idx)
+        # variance_calculator.update_rating_variance(model, 0) 
+    
+    ccdf_path = os.path.join("draw_logs", args.dataset, args.backbone, args.model.lower())
+    drawer = None
+    if args.draw_student:
+        drawer = Drawer(args, ccdf_path)
 
-        interesting_samples = torch.index_select(self.interesting_items, 0, batch_user)
-        uninteresting_samples = torch.index_select(self.uninteresting_items, 0, batch_user)
+    num_sample = torch.zeros(num_users, num_items, dtype = torch.int32).cuda()
 
-        return interesting_samples, uninteresting_samples
+    for epoch in range(args.epochs):
+        logger.log(f'Epoch [{epoch + 1}/{args.epochs}]')
+        tic1 = time.time()
+        logger.log('Negative sampling...')
+        train_loader.dataset.negative_sampling()
 
-    # epoch 마다
-    def do_something_in_each_epoch(self, epoch):
-        with torch.no_grad():
-            # interesting items
-            self.interesting_items = torch.zeros((self.num_users, self.K))
+        logger.log("Model's personal time...")
+        model.do_something_in_each_epoch(epoch)
 
-            # sampling
-            while True:
-                samples = torch.multinomial(self.ranking_mat, self.K, replacement=False)
-                if (samples > self.mxK).sum() == 0:
-                    break
+        epoch_loss, epoch_base_loss, epoch_kd_loss = [], [], []
+        logger.log('Training...')
+        
+        for idx, (batch_user, batch_pos_item, batch_neg_item) in enumerate(train_loader):
+            batch_user = batch_user.cuda()      # batch_size
+            batch_pos_item = batch_pos_item.cuda()  # batch_size
+            batch_neg_item = batch_neg_item.cuda()  # batch_size, num_ns
             
-            if not self.no_sort:
-                samples = samples.sort(dim=1)[0]
+            # Forward Pass
+            model.train()
+            loss, base_loss, kd_loss = model(batch_user, batch_pos_item, batch_neg_item)
 
-            for user in range(self.num_users):
-                self.interesting_items[user] = self.topk_dict[user][samples[user]]
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            torch.cuda.empty_cache() # clear memory
+            epoch_loss.append(loss.detach())
+            epoch_base_loss.append(base_loss)
+            epoch_kd_loss.append(kd_loss)
 
-            self.interesting_items = self.interesting_items.cuda()
+        epoch_loss = torch.mean(torch.stack(epoch_loss)).item()
+        epoch_base_loss = torch.mean(torch.stack(epoch_base_loss)).item()
+        epoch_kd_loss = torch.mean(torch.stack(epoch_kd_loss)).item()
 
-            # uninteresting items
-            m1 = self.mask[: self.num_users // 2, :].cuda()
-            tmp1 = torch.multinomial(m1, self.L, replacement=False)
-            del m1
+        toc1 = time.time()
 
-            m2 = self.mask[self.num_users // 2 : ,:].cuda()
-            tmp2 = torch.multinomial(m2, self.L, replacement=False)
-            del m2
+        # update variance
+        if "rrdvk" in args.model.lower():
+            if epoch % args.calu_len == 0:
+                feature_idx = model.reset_item() # 后续需要计算的user-item对的方差
+                model_variance, cur_idx = variance_calculator.get_rating_variance() # 前几轮计算得到的方差
+                model.set_model_variance(model_variance, cur_idx) 
+                variance_calculator.reset(feature_idx)
+            variance_calculator.update_rating_variance(model)
 
-            self.uninteresting_items = torch.cat([tmp1, tmp2], 0)
-    
-    def relaxed_ranking_loss(self, S1, S2):
+            un_items = model.get_un_items()
+            # 生成行索引
+            # rows = torch.arange(num_users).view(-1, 1).expand(-1, un_items.shape[1])
+            # 创建要添加的值（每个索引加 1）
+            updates = torch.ones_like(un_items, dtype=torch.int)
+            # 使用 scatter_add_ 进行累加
+            num_sample.scatter_add_(1, un_items, updates)
+
+        if args.model.lower() == "rrdvar" or args.model.lower() == "dcdvar":
+            # print(f"update variance... - epoch: {epoch + 1}")
+            variance_calculator.update_rating_variance(model, epoch)
+            model_variance = variance_calculator.get_rating_variance()
+            model.set_model_variance(model_variance)
+
+        # evaluation
+        if epoch % args.eval_period == 0:
+            logger.log("Evaluating...")
+            is_improved, early_stop, eval_results, elapsed = evaluator.evaluate_while_training(model, epoch, train_loader, validset, testset)
+            evaluator.print_result_while_training(logger, epoch_loss, epoch_base_loss, epoch_kd_loss, eval_results, is_improved=is_improved, train_time=toc1-tic1, test_time=elapsed)
+            if early_stop:
+                break
+            if is_improved:
+                best_model = deepcopy(model.param_to_save)
+                best_epoch = epoch
         
-        S1 = torch.minimum(S1, torch.tensor(80., device=S1.device))     # This may help
-        S2 = torch.minimum(S2, torch.tensor(80., device=S2.device))
+        # save intermediate checkpoints
+        if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
+            ckpts.append(deepcopy(model.param_to_save))
+    if args.draw_student:
+        drawer.plot_sample(num_sample, num_users, num_items, "sample", "", "")
+    eval_dict = evaluator.eval_dict
+    Evaluator.print_final_result(logger, eval_dict)
+    Evaluator.print_final_result(ans_logger, eval_dict)
 
-        above = S1.sum(1, keepdims=True)
 
-        below1 = S1.flip(-1).exp().cumsum(1)    # exp() of interesting_prediction results in inf
-        below2 = S2.exp().sum(1, keepdims=True)
+    if not args.no_save:
+        embedding_dim = Teacher.embedding_dim if args.train_teacher else Student.embedding_dim
+        save_dir = os.path.join("checkpoints", args.dataset, args.backbone, f"{args.model.lower()}-{embedding_dim}")
+        os.makedirs(save_dir, exist_ok=True)
+        torch.save(best_model, os.path.join(save_dir, "BEST_EPOCH.pt"))
+        for idx, ckpt in enumerate(ckpts):
+            if (idx + 1) * args.ckpt_interval >= best_epoch:
+                break
+            torch.save(ckpt, os.path.join(save_dir, f"EPOCH_{(idx + 1) * args.ckpt_interval}.pt"))
 
-        below = (below1 + below2).log().sum(1, keepdims=True)
+    return eval_dict
+
+
+if __name__ == '__main__':
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
+    logger = Logger(args, args.no_log)
+    ans_logger = Logger(args, args.no_log, True)
+
+    if args.run_all:
+        args_copy = deepcopy(args)
+        eval_dicts = []
+
+        for seed in range(5):
+            args = deepcopy(args_copy)
+            args.seed = seed
+            seed_all(args.seed)
+            logger.log_args(teacher_args, "TEACHER")
+            if not args.train_teacher:
+                logger.log_args(student_args, "STUDENT")
+            logger.log_args(args, "ARGUMENTS")
+            eval_dicts.append(main(args))
         
-        return -(above - below).sum()
+        avg_eval_dict = avg_dict(eval_dicts)
 
-    def get_loss(self, *params):
-        batch_user = params[0]
-        users = batch_user.unique()
-        interesting_items, uninteresting_items = self.get_samples(users)
-        interesting_items = interesting_items.type(torch.LongTensor).cuda()
-        uninteresting_items = uninteresting_items.type(torch.LongTensor).cuda()
+        logger.log('=' * 60)
+        Evaluator.print_final_result(logger, avg_eval_dict, prefix="avg ")
+    else:
 
-        interesting_prediction = self.student.forward_multi_items(users, interesting_items)
-        uninteresting_prediction = self.student.forward_multi_items(users, uninteresting_items)
-
-        URRD_loss = self.relaxed_ranking_loss(interesting_prediction, uninteresting_prediction)
-
-        return URRD_loss
+        logger.log_args(teacher_args, "TEACHER")
+        ans_logger.log_args(teacher_args, "TEACHER")
+        if not args.train_teacher:
+            logger.log_args(student_args, "STUDENT")
+            ans_logger.log_args(student_args, "STUDENT")
+        logger.log_args(args, "ARGUMENTS")
+        ans_logger.log_args(args, "ARGUMENTS")
+        seed_all(args.seed)
+        main(args)
