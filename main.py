@@ -213,7 +213,7 @@ if __name__ == '__main__':
         logger.log('=' * 60)
         Evaluator.print_final_result(logger, avg_eval_dict, prefix="avg ")
     else:
-
+        ans_logger.prelog()
         logger.log_args(teacher_args, "TEACHER")
         ans_logger.log_args(teacher_args, "TEACHER")
         if not args.train_teacher:

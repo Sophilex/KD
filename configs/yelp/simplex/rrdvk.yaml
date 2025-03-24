@@ -12,9 +12,7 @@ rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
-rrd_extra: 5000
-mode: 'None'
+rrd_extra: 4000
+mode: "None"
 alpha: 1
 neg_T: 1
-sample_type_for_extra: "random_regardless_uninteresting"
-T_for_extra: 1

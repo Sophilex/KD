@@ -2,18 +2,16 @@ epochs: 1000
 batch_size: 2048
 lr: 1.e-3
 wd: 1.e-5
-lmbda: 0.01
+lmbda: 0.001
 
-rrd_K: 50
-rrd_L: 100
+rrd_K: 100
+rrd_L: 200
 rrd_T: 10
 rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
 rrd_extra: 5000
-mode: 'None'
 alpha: 1
+mode: "None"
 neg_T: 1
-sample_type_for_extra: "random_regardless_uninteresting"
-T_for_extra: 1

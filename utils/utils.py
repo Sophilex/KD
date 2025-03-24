@@ -78,7 +78,13 @@ class Logger:
             self.log_path = os.path.join(args.SHORT_LOG_DIR, args.dataset, args.backbone, args.model + ('_' if args.suffix != '' else '') + args.suffix + '.log')
         os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
         self.no_log = no_log
-
+        self.is_ans = is_ans
+    
+    def prelog(self):
+        self.log("", pre = False)
+        self.log("", pre = False)
+        self.log(" ")
+        self.log('-' * 40 + "Start Training" + '-' * 40, pre=False)
     def log(self, content='', pre=True, end='\n'):
         string = str(content)
         if len(string) == 0:
@@ -94,9 +100,9 @@ class Logger:
         if not self.no_log:
             with open(self.log_path, 'a') as logf:
                 logf.write(string)
-
-        sys.stdout.write(string)
-        sys.stdout.flush()
+        if not self.is_ans:
+            sys.stdout.write(string)
+            sys.stdout.flush()
     
     def log_args(self, args, text="ARGUMENTS"):
         ans = ""

@@ -14,3 +14,6 @@ calu_len: 5
 rrd_extra: 5000
 mode: "val_diff"
 alpha: 1
+neg_T: 1
+sample_type_for_extra: "random_regardless_uninteresting"
+T_for_extra: 1

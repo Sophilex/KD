@@ -320,6 +320,8 @@ class RRDUnselected(BaseKD4Rec):
         self.T = args.rrd_T
         self.mxK = args.rrd_mxK
         self.unselected = args.rrd_unselected
+        self.cover = args.cover
+        self.neg = args.neg
 
         # For interesting item
         self.get_topk_dict()
@@ -330,8 +332,9 @@ class RRDUnselected(BaseKD4Rec):
         self.mask = torch.ones((self.num_users, self.num_items))
         train_pairs = self.dataset.train_pairs
         self.mask[train_pairs[:, 0], train_pairs[:, 1]] = 0
-        for user in range(self.num_users):
-            self.mask[user, self.topk_dict[user]] = 0 # 把每个用户top mxk的interesting item以及交互过的item都mask掉,那么它们之后被采样的概率就是0了，剩余item的值都是1，会被等概率采样
+        if self.cover == 1:
+            for user in range(self.num_users):
+                self.mask[user, self.topk_dict[user]] = 0 # 把每个用户top mxk的interesting item以及交互过的item都mask掉,那么它们之后被采样的概率就是0了，剩余item的值都是1，会被等概率采样
         self.mask.requires_grad = False
 
 
@@ -398,7 +401,7 @@ class RRDUnselected(BaseKD4Rec):
         below1 = S1.flip(-1).exp().cumsum(1)    # exp() o finteresting_prediction results in inf
         below2 = S2.exp().sum(1, keepdims=True)
 
-        below = (below1 + below2 + self.unselected * unselected_below).log().sum(1, keepdims=True)
+        below = (below1 + self.neg * below2 + self.unselected * unselected_below).log().sum(1, keepdims=True)
         
         return -(above - below).sum()
 
@@ -655,6 +658,9 @@ class RRDVK(BaseKD4Rec):
         self.calu_len = args.calu_len
         self.mode = args.mode
         self.alpha = args.alpha
+        self.neg_T = args.neg_T
+        self.sample_type_for_extra = args.sample_type_for_extra
+        self.T_for_extra = args.T_for_extra
 
         # For interesting item
         self.get_topk_dict()
@@ -686,7 +692,6 @@ class RRDVK(BaseKD4Rec):
         self.item_idx = item_idx
         self.model_variance = self.model_variance + 1e-6
 
-
     def get_topk_dict(self):
         print('Generating Top-K dict...')
         with torch.no_grad():
@@ -708,24 +713,6 @@ class RRDVK(BaseKD4Rec):
         # 得到interesting items 以及uninteresting items的索引
         with torch.no_grad():
 
-            num_parts = 256
-            
-            pred_lst = []
-            for start_idx in range(0, self.num_users, num_parts):
-                end_idx = min(start_idx + num_parts, self.num_users)
-                batch_user = torch.arange(start_idx, end_idx)
-                T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
-                if self.mode == "val_diff":
-                    S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
-                    pred_lst.append(torch.abs(T_inter_mat - S_inter_mat))
-                    del T_inter_mat, S_inter_mat
-                else:
-                    pred_lst.append(T_inter_mat)
-                    del T_inter_mat
-
-            T_pred = torch.cat(pred_lst, 0).cpu() # differencr between T,S if mode = "val_diff", else T's pred
-            del pred_lst
-
             # interesting items
             self.interesting_items = torch.zeros((self.num_users, self.K)) # 初始化矩阵
 
@@ -744,67 +731,106 @@ class RRDVK(BaseKD4Rec):
             
 
             # uninteresting items
+            num_parts = 256
             chunk_size = self.num_users // num_parts
             all_tmp = []
 
             # different sample mode
-            
+            pred_lst = []
+            for start_idx in range(0, self.num_users, num_parts):
+                end_idx = min(start_idx + num_parts, self.num_users)
+                batch_user = torch.arange(start_idx, end_idx)
+                T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                if self.mode == "val_diff":
+                    S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    pred_lst.append(torch.abs(T_inter_mat - S_inter_mat))
+                    del T_inter_mat, S_inter_mat
+                else:
+                    pred_lst.append(T_inter_mat)
+                    del T_inter_mat
 
-            targt = None
-            if self.mode == "val_diff":
-                # add val information between S and T
-                targt = T_pred
-            elif self.mode == "val_T":
+            distill_info = torch.cat(pred_lst, 0).cpu() # differencr between T,S if mode = "val_diff", else T's pred
+            del pred_lst
+
+            if self.mode == "val_diff" or self.mode == "val_T":
+                # add val information between S and T  
                 # add Teacher's val information
-                targt = T_pred
+                pass
             else: 
                 # add no val informatio
-                targt = torch.zeros_like(self.model_variance)
-            del T_pred
+                distill_info.zero_() # clean the distill informatino
 
 
             for i in range(num_parts):
                 start_idx = i * chunk_size
                 end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
+
+                var_slice = self.model_variance[start_idx:end_idx, :].cuda() / self.neg_T
+                clamped_var = torch.clamp(var_slice, max=80.0)
+                m_part = torch.exp(clamped_var).cuda()
+                m_part = m_part / m_part.sum(1, keepdims=True)
+                # control the variance_info with temperature neg_T
                 
-                m_part = self.model_variance[start_idx:end_idx, :].cuda()
-                tar_part = targt[start_idx:end_idx, :].cuda().softmax(dim=1)
-                if self.mode == "val_diff" or self.mode == "val_T":
-                    tmp_part = torch.multinomial(tar_part + self.alpha * m_part, self.L, replacement=False)
-                else:
-                    tmp_part = torch.multinomial(m_part, self.L, replacement=False)
-                all_tmp.append(tmp_part)
+                distill_part = distill_info[start_idx:end_idx, :].cuda().softmax(dim=1)
+
+                tmp_part = torch.multinomial(distill_part + self.alpha * m_part, self.L, replacement=False)
+                # sampl neg items with distill_info and model_variance, control the rate between the with alpha
+                idx_part = self.item_idx[start_idx:end_idx, :].cuda()
+                all_tmp.append(torch.gather(idx_part, 1, tmp_part))
+                
                 del m_part, tmp_part
 
             self.uninteresting_items = torch.cat(all_tmp, 0)
 
             # extra items
-            # with different types for sampling extra items
+            # with different types for sampling extra items: random_with_uninteresting random_regardless_uninteresting T_val_with_uninteresting
             all_tmp = []
-            self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
+            if self.sample_type_for_extra != "random_regardless_uninteresting": # 不考虑是否混入这一轮采样过的负样本
+                self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 0
 
             for i in range(num_parts):
                 start_idx = i * chunk_size
                 end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
-                
-                m_part = self.mask[start_idx:end_idx, :].cuda()
-                if self.type == "with_val": # 后续在维护待选列表的时候会添加一步基于教师分数的topk采样
-                    tmp_part = torch.multinomial(m_part, self.extra*2, replacement=False)
+                batch_user = torch.arange(start_idx, end_idx)
+                m_part = self.mask[start_idx:end_idx, :].cuda() # batch_size X num_items
+                if self.sample_type_for_extra == "random_with_uninteresting":
+                    batch_extra_items = torch.multinomial(m_part, self.extra, replacement=False)
+                    batch_uninteresting = self.uninteresting_items[start_idx:end_idx, :].cuda() 
+                    tmp_part = torch.cat([batch_extra_items, batch_uninteresting], 1)
+
+                elif self.sample_type_for_extra == "random_regardless_uninteresting":
+                    tmp_part = torch.multinomial(m_part, self.extra + self.L, replacement=False)
+
                 else:
-                    tmp_part = torch.multinomial(m_part, self.extra, replacement=False)
+                    # sample_type_for_extra == T_val_with_uninteresting
+                    T_val = self.teacher.get_ratings(batch_user) # batch_size X num_items
+                    batch_extra_items = torch.multinomial(m_part, self.extra * 2, replacement=False)
+                    batch_uninteresting = self.uninteresting_items[start_idx:end_idx, :].cuda() 
+                    all_items = torch.cat([batch_extra_items, batch_uninteresting], 1) # batch_size X (self.extra*2 + self.L)
+
+                    m_part[torch.arange(batch_extra_items.size(0)).unsqueeze(-1), batch_uninteresting] = 1
+                    masked_T_val = T_val * m_part 
+                    m_part[torch.arange(batch_extra_items.size(0)).unsqueeze(-1), batch_uninteresting] = 0
+                    batch_score = masked_T_val.gather(1, all_items) # generate value for all_items mentioned above
+
+                    batch_score = torch.clamp(batch_score / self.T_for_extra, max=80.0)
+                    batch_score = torch.exp(batch_score)
+
+                    selected_indices = torch.multinomial(batch_score, self.extra + self.L, replacement=False) # batch_size X (self.extra + self.L)
+                    tmp_part = all_items.gather(1, selected_indices) # return the idx of selected_indices
+
                 all_tmp.append(tmp_part)
                 del m_part, tmp_part
-            self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 1
-            self.extra_items = torch.cat(all_tmp, 0)
+            if self.sample_type_for_extra != "random_regardless_uninteresting":
+                self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 1
+            self.candidate_items = torch.cat(all_tmp, 0)
             del all_tmp
 
     def reset_item(self):
-        # print(f"visual extra_items shape: {self.extra_items.dtype}, uninteresting_items shape: {self.uninteresting_items.shape}")
-        ans = torch.concat([self.uninteresting_items, self.extra_items], 1).cuda() # 这里不对，需要对应上教师给的分数
-        _, final_ans = torch.topk(ans, self.L + self.extra, dim=-1) # self.num_users X self.L + self.extra , 返回每行topmaxK的idx
-        del ans
-        return final_ans
+        return self.candidate_items
     
+    def get_un_items(self):
+        return self.uninteresting_items
 
     def relaxed_ranking_loss(self, S1, S2, S3):
         
@@ -1146,7 +1172,8 @@ class RRDvkNoCon(BaseKD4Rec):
                     tmp_part = torch.multinomial(tar_part + self.alpha * m_part, self.L, replacement=False)
                 else:
                     tmp_part = torch.multinomial(m_part, self.L, replacement=False)
-                all_tmp.append(tmp_part)
+                idx_part = self.item_idx[start_idx:end_idx, :].cuda()
+                all_tmp.append(torch.gather(idx_part, 1, tmp_part))
                 del m_part, tmp_part
 
             self.uninteresting_items = torch.cat(all_tmp, 0)
@@ -1166,12 +1193,17 @@ class RRDvkNoCon(BaseKD4Rec):
                 del m_part, tmp_part
             # self.mask[torch.arange(self.uninteresting_items.size(0)).unsqueeze(-1), self.uninteresting_items] = 1
             self.extra_items = torch.cat(all_tmp, 0)
+            
             del all_tmp
 
     def reset_item(self):
         # print(f"visual extra_items shape: {self.extra_items.dtype}, uninteresting_items shape: {self.uninteresting_items.shape}")
         return self.extra_items # user_num X (self.L + self.extra) 随机采样
     def get_un_items(self):
+        sort_items = torch.sort(self.uninteresting_items[0])[0]
+        sorted_items_str = " ".join(map(str, sort_items.tolist()))
+        with open("output.txt", "a") as f:
+            f.write(sorted_items_str + "\n")
         return self.uninteresting_items
 
     def relaxed_ranking_loss(self, S1, S2, S3):

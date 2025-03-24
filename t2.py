@@ -173,7 +173,7 @@ def main(args):
         if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
             ckpts.append(deepcopy(model.param_to_save))
     if args.draw_student:
-        drawer.plot_sample(num_sample, num_users, num_items, "sample", "", "")
+        drawer.plot_sample(num_sample, num_users, num_items, "sample"+args.draw_filename, "", "")
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
     Evaluator.print_final_result(ans_logger, eval_dict)
