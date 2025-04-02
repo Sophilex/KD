@@ -431,6 +431,7 @@ class RRD(BaseKD4Rec):
         self.L = args.rrd_L
         self.T = args.rrd_T
         self.mxK = args.rrd_mxK
+        self.neg = args.neg_x
 
         # For interesting item
         self.get_topk_dict()
@@ -501,7 +502,7 @@ class RRD(BaseKD4Rec):
         below1 = S1.flip(-1).exp().cumsum(1)    # exp() of interesting_prediction results in inf
         below2 = S2.exp().sum(1, keepdims=True)
 
-        below = (below1 + below2).log().sum(1, keepdims=True)
+        below = (below1 + self.neg * below2).log().sum(1, keepdims=True)
         
         return -(above - below).sum()
 
@@ -519,6 +520,70 @@ class RRD(BaseKD4Rec):
 
         return URRD_loss
 
+class ISp(BaseKD4Rec):
+    def __init__(self, args, teacher, student):
+        super().__init__(args, teacher, student)
+        self.model_name = "rrd"
+        self.K = args.rrd_K # 采样个数
+        self.softmax_T = args.rrd_softmax_T
+        self.isp_T = args.isp_T
+
+    def do_something_in_each_epoch(self, epoch):
+        with torch.no_grad():
+            self.selected_items = torch.zeros((self.num_users, self.K)).cuda()
+            inter_mat = self.teacher.get_all_ratings()
+
+            num_parts = 256
+            chunk_size = self.num_users // num_parts
+
+            for i in range(num_parts):
+                start_idx = i * chunk_size
+                end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
+                
+                inter_mat_slice = inter_mat[start_idx:end_idx].cuda()
+
+                p_prob = F.softmax(inter_mat_slice / self.softmax_T, dim=-1).cuda()
+                q_prob = p_prob ** self.isp_T
+                sample_prob = p_prob / q_prob # importance sampling
+                
+                selected_slice = torch.multinomial(sample_prob, self.K, replacement=False).cuda()
+                
+                sampled_values = torch.gather(sample_prob, 1, selected_slice)
+                _, sorted_indices = torch.sort(sampled_values, dim=1, descending=True)
+                # 用排序后的索引重新排列 selected_slice
+                selected_slice = torch.gather(selected_slice, 1, sorted_indices)
+
+                self.selected_items[start_idx:end_idx] = selected_slice
+                # sample_result_value = torch.gather(inter_mat_slice, 1, selected_slice).cpu().numpy()
+
+                # with open(f"sample_result.txt", "a") as f:
+                #     row = sample_result_value[0]
+                #     f.write("\t".join(map(str, row)) + "\n")
+    
+    def relaxed_ranking_loss(self, S):
+        
+        S = torch.minimum(S, torch.tensor(80., device=S.device))     # This may help
+
+        above = S.sum(1, keepdims=True)
+
+        below = S.flip(-1).exp().cumsum(1)    # exp() of interesting_prediction results in inf
+
+        below = below.log().sum(1, keepdims=True)
+        
+        return -(above - below).sum()
+
+    def get_loss(self, *params):
+        batch_user = params[0]
+        users = batch_user.unique()
+        selected_items = torch.index_select(self.selected_items, 0, users)
+
+        selected_items = selected_items.type(torch.LongTensor).cuda()
+
+        selected_prediction = self.student.forward_multi_items(users, selected_items)
+
+        URRD_loss = self.relaxed_ranking_loss(selected_prediction)
+
+        return URRD_loss
 
 
 
@@ -547,7 +612,7 @@ class RRDVar(BaseKD4Rec):
         self.mask.requires_grad = False
 
     def set_model_variance(self, model_variance):
-        self.model_variance = model_variance
+        self.model_variance = model_variance.cpu()
         self.model_variance += 1e-8
         # print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
         # print(self.model_variance.shape)
@@ -661,6 +726,8 @@ class RRDVK(BaseKD4Rec):
         self.neg_T = args.neg_T
         self.sample_type_for_extra = args.sample_type_for_extra
         self.T_for_extra = args.T_for_extra
+        self.mx_T = args.mx_T
+        # self.cover = args.cover
 
         # For interesting item
         self.get_topk_dict()
@@ -740,45 +807,70 @@ class RRDVK(BaseKD4Rec):
             for start_idx in range(0, self.num_users, num_parts):
                 end_idx = min(start_idx + num_parts, self.num_users)
                 batch_user = torch.arange(start_idx, end_idx)
-                T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
-                if self.mode == "val_diff":
+                if self.mode == "val_diff_0":
+                    print("val_diff_0")
+                    # absolute difference between scores
+                    T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
                     S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
                     pred_lst.append(torch.abs(T_inter_mat - S_inter_mat))
                     del T_inter_mat, S_inter_mat
-                else:
+                elif self.mode == "val_diff_1":
+                    print("val_diff_1")
+                    # absolute difference between idx
+                    T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    T_inter_mat = torch.argsort(T_inter_mat, dim=1)
+                    S_inter_mat = torch.argsort(S_inter_mat, dim=1)
+                    T_inter_mat = torch.argsort(T_inter_mat, dim=1)
+                    S_inter_mat = torch.argsort(S_inter_mat, dim=1)
+                    pred_lst.append(torch.abs(T_inter_mat - S_inter_mat))
+                    del T_inter_mat, S_inter_mat
+                elif self.mode == "val_diff_2":
+                    print("val_diff_2")
+                    # difference between idx
+                    T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    T_inter_mat = torch.argsort(T_inter_mat, dim=1, descending=True)    
+                    S_inter_mat = torch.argsort(S_inter_mat, dim=1, descending=True)
+                    T_inter_mat = torch.argsort(T_inter_mat, dim=1)
+                    S_inter_mat = torch.argsort(S_inter_mat, dim=1)
+                    pred_lst.append(T_inter_mat - S_inter_mat) # 学生给的排名越相对激进越容易被采样
+                    del T_inter_mat, S_inter_mat
+                elif self.mode == "val_S":
+                    print("val_S")
+                    S_inter_mat = self.student.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
+                    pred_lst.append(S_inter_mat)
+                    del S_inter_mat
+                elif self.mode == "val_T":
+                    print("val_T")
+                    T_inter_mat = self.teacher.get_user_item_ratings(batch_user, self.item_idx[batch_user]).cuda() # 每个user对应的item的分数
                     pred_lst.append(T_inter_mat)
                     del T_inter_mat
+                else:
+                    pred_lst.append(torch.zeros((batch_user.shape[0], self.item_idx.shape[1]), dtype=torch.float).cuda())
 
             distill_info = torch.cat(pred_lst, 0).cpu() # differencr between T,S if mode = "val_diff", else T's pred
             del pred_lst
 
-            if self.mode == "val_diff" or self.mode == "val_T":
-                # add val information between S and T  
-                # add Teacher's val information
-                pass
-            else: 
-                # add no val informatio
-                distill_info.zero_() # clean the distill informatino
 
-
+            alpha = self.alpha * min(epoch * 1.0 / self.mx_T, 1)
+            print(alpha)
             for i in range(num_parts):
                 start_idx = i * chunk_size
                 end_idx = (i + 1) * chunk_size if i != num_parts - 1 else self.num_users
-
-                var_slice = self.model_variance[start_idx:end_idx, :].cuda() / self.neg_T
-                clamped_var = torch.clamp(var_slice, max=80.0)
-                m_part = torch.exp(clamped_var).cuda()
-                m_part = m_part / m_part.sum(1, keepdims=True)
-                # control the variance_info with temperature neg_T
                 
-                distill_part = distill_info[start_idx:end_idx, :].cuda().softmax(dim=1)
-
-                tmp_part = torch.multinomial(distill_part + self.alpha * m_part, self.L, replacement=False)
+                var_slice = self.model_variance[start_idx:end_idx, :].cuda()
+                distill_part = distill_info[start_idx:end_idx, :].cuda()
+                # print(f"dis: {distill_part.min()}, {distill_part.max()}, var: {var_slice.min()}, {var_slice.max()}")
+                combine_part = alpha * var_slice + distill_part
+                combine_part = torch.clamp(combine_part / self.neg_T, max=80.0)
+                combine_part = torch.exp(combine_part)
+                tmp_part = torch.multinomial(combine_part, self.L, replacement=False)
                 # sampl neg items with distill_info and model_variance, control the rate between the with alpha
                 idx_part = self.item_idx[start_idx:end_idx, :].cuda()
                 all_tmp.append(torch.gather(idx_part, 1, tmp_part))
                 
-                del m_part, tmp_part
+                del tmp_part
 
             self.uninteresting_items = torch.cat(all_tmp, 0)
 
@@ -1249,7 +1341,7 @@ class DCD(BaseKD4Rec):
         self.mxK = args.dcd_mxK
         self.ablation = args.ablation
         self.tau = args.dcd_tau
-        self.negx = args.dcd_negx
+        self.negx = args.neg_x
         self.T_topk = self.get_topk_dict()
         self.T_rank = torch.arange(self.mxK).repeat(self.num_users, 1).cuda() # 在教师视角T_topk里元素的rk就是1-n的正序排序
 

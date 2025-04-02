@@ -12,6 +12,7 @@ import torch.utils.data as data
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 
 
 def to_np(x):
@@ -162,7 +163,7 @@ class Drawer:
         return prob, ccdf
     
     def plot_CCDF4negs(self, model, train_loader, valid_dataset, test_dataset, label, mxK):
-        prob, ccdf = self.gt_CCDF4negs(model, train_loader, valid_dataset, test_dataset)
+        prob, ccdf = self.gt_CCDF4negs(model, train_loader, valid_dataset, test_dataset, mxK)
         # plt.plot(prob, ccdf, label=label)
         # plt.savefig(os.path.join(self.path, label))
         self.add(prob, ccdf, label)
@@ -199,13 +200,56 @@ class Drawer:
         self.y_axis_lst.append(y_axis)
         self.label_lst.append(label)
     
-    def plot_all(self, filename, x_name, y_name):
+
+    def plot_all_subfig(self, filename, x_name, y_name, savetype):
+        # 找到所有曲线的最小和最大 x 值
+        all_x = [x for lst in self.x_axis_lst for x in lst]
+        x_min, x_max = min(all_x), max(all_x)
+
+        fig, ax = plt.subplots(figsize=(8, 6))  # 创建主图
+
+        # 主图绘制
+        for i in range(len(self.x_axis_lst)):
+            ax.plot(self.x_axis_lst[i], self.y_axis_lst[i], label=self.label_lst[i])
+
+        ax.set_xlim(x_min, x_max)
+        ax.set_xlabel(x_name)
+        ax.set_ylabel(y_name)
+        ax.legend(loc="upper right")  # 避免挡住子图
+        ax.grid(True)
+        ax.margins(x=0, y=0)
+
+        # 确定放大区域 (左下角拐角处)
+        zoom_x_min, zoom_x_max = 0.00003, 0.0002
+        zoom_y_min, zoom_y_max = 0, 0.2
+
+        # 创建子图 (放在中间，靠右位置)
+        ax_inset = inset_axes(ax, width="35%", height="30%", loc="center right")
+
+        # 子图绘制
+        for i in range(len(self.x_axis_lst)):
+            ax_inset.plot(self.x_axis_lst[i], self.y_axis_lst[i])
+
+        ax_inset.set_xlim(zoom_x_min, zoom_x_max)
+        ax_inset.set_ylim(zoom_y_min, zoom_y_max)  # 自动匹配 y 轴
+        ax_inset.tick_params(axis='both', which='both', length=0)  # 隐藏刻度
+        ax_inset.set_xticks([])
+        ax_inset.set_yticks([])
+
+        # 添加放大框 & 虚线连接
+        mark_inset(ax, ax_inset, loc1=2, loc2=4, fc="none", ec="black", linestyle="--", lw=1)
+
+        # 保存图片
+        final_path = os.path.join(self.path, filename)
+        plt.savefig(final_path, format=savetype, bbox_inches='tight')
+        plt.close()
+
+    
+    def plot_all(self, filename, x_name, y_name, savetype):
         print(len(self.x_axis_lst))
         # 找到所有曲线的最小和最大 x 值
         all_x = [x for lst in self.x_axis_lst for x in lst]
         x_min, x_max = min(all_x), max(all_x)
-        
-        # plt.figure(figsize=(8, 6))
         
         for i in range(len(self.x_axis_lst)):
             # 将所有的 x 轴限制在统一范围内
@@ -218,7 +262,7 @@ class Drawer:
         plt.grid(True)
         plt.margins(x=0, y=0)
         final_path = os.path.join(self.path, filename)
-        plt.savefig(final_path)
+        plt.savefig(final_path, format= savetype)
     
     def plot_sample(self, x, num_users, num_items, filename, x_name, y_name):
         nonzero_samples = [x[i][x[i] > 0] for i in range(num_users)]  # 取出每个用户非零项

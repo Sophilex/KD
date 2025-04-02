@@ -9,3 +9,5 @@ rrd_K: 40
 rrd_L: 40
 rrd_T: 10
 rrd_mxK: 500
+rrd_unselected: 0
+neg_x: 1

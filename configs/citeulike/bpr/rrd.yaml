@@ -8,3 +8,4 @@ rrd_K: 100
 rrd_L: 200
 rrd_T: 10
 rrd_mxK: 500
+neg_x: 1

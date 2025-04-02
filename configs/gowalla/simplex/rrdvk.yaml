@@ -12,4 +12,11 @@ rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
+rrd_extra: 5000
+mode: "val_diff"
+alpha: 1
+neg_T: 1
 rrd_extra: 8000
+mx_T: 50
+T_for_extra: 1
+sample_type_for_extra: "random_regardless_uninteresting"

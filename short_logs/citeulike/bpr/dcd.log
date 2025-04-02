@@ -407,3 +407,1013 @@ dcd_L                                    200
 dcd_negx                                 1
 dcd_tau                                  1
 ----------------------------------------ARGUMENTS----------------------------------------
+
+
+03/27/2025,21:21:15:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    0
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,21:29:37: ------------------------------
+03/27/2025,21:29:37: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,21:29:37: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,21:29:42:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    0.1
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,21:37:42: ------------------------------
+03/27/2025,21:37:42: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,21:37:42: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,21:37:48:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    0.5
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,21:45:50: ------------------------------
+03/27/2025,21:45:50: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,21:45:50: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,21:45:56:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    1
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,21:53:45: ------------------------------
+03/27/2025,21:53:45: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,21:53:45: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,21:53:50:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    2
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,22:01:56: ------------------------------
+03/27/2025,22:01:56: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,22:01:56: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,22:02:02:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    3
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,22:09:52: ------------------------------
+03/27/2025,22:09:52: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,22:09:52: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,22:09:57:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    5
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,22:17:49: ------------------------------
+03/27/2025,22:17:49: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,22:17:49: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/27/2025,22:17:55:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+dcd_negx                                 1
+dcd_tau                                  1
+neg_x                                    10
+----------------------------------------ARGUMENTS----------------------------------------
+03/27/2025,22:25:58: ------------------------------
+03/27/2025,22:25:58: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/27/2025,22:25:58: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/28/2025,09:25:53:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    0
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,09:37:27: ------------------------------
+03/28/2025,09:37:27: valid Recall@10: 0.03051 Recall@20: 0.04609 NDCG@10: 0.01718 NDCG@20: 0.02156
+03/28/2025,09:37:27: test Recall@10: 0.01207 Recall@20: 0.02054 NDCG@10: 0.00814 NDCG@20: 0.01037
+
+
+03/28/2025,09:37:32:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    0.1
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,09:55:05: ------------------------------
+03/28/2025,09:55:05: valid Recall@10: 0.05263 Recall@20: 0.07804 NDCG@10: 0.03047 NDCG@20: 0.03744
+03/28/2025,09:55:05: test Recall@10: 0.02047 Recall@20: 0.03166 NDCG@10: 0.01126 NDCG@20: 0.01433
+
+
+03/28/2025,09:55:11:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    0.5
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,10:12:53: ------------------------------
+03/28/2025,10:12:53: valid Recall@10: 0.05548 Recall@20: 0.08431 NDCG@10: 0.03319 NDCG@20: 0.04117
+03/28/2025,10:12:53: test Recall@10: 0.02196 Recall@20: 0.03421 NDCG@10: 0.01211 NDCG@20: 0.01534
+
+
+03/28/2025,10:12:58:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    1
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,10:23:39: ------------------------------
+03/28/2025,10:23:39: valid Recall@10: 0.05562 Recall@20: 0.08037 NDCG@10: 0.03227 NDCG@20: 0.03900
+03/28/2025,10:23:39: test Recall@10: 0.02034 Recall@20: 0.03225 NDCG@10: 0.01165 NDCG@20: 0.01492
+
+
+03/28/2025,10:23:45:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    2
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,10:34:00: ------------------------------
+03/28/2025,10:34:00: valid Recall@10: 0.05626 Recall@20: 0.08074 NDCG@10: 0.03271 NDCG@20: 0.03943
+03/28/2025,10:34:00: test Recall@10: 0.02079 Recall@20: 0.03232 NDCG@10: 0.01174 NDCG@20: 0.01492
+
+
+03/28/2025,10:34:05:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    3
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,10:51:31: ------------------------------
+03/28/2025,10:51:31: valid Recall@10: 0.05747 Recall@20: 0.08538 NDCG@10: 0.03383 NDCG@20: 0.04148
+03/28/2025,10:51:31: test Recall@10: 0.02243 Recall@20: 0.03485 NDCG@10: 0.01182 NDCG@20: 0.01517
+
+
+03/28/2025,10:51:36:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    5
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,11:02:18: ------------------------------
+03/28/2025,11:02:18: valid Recall@10: 0.05613 Recall@20: 0.08189 NDCG@10: 0.03314 NDCG@20: 0.04019
+03/28/2025,11:02:18: test Recall@10: 0.02166 Recall@20: 0.03287 NDCG@10: 0.01178 NDCG@20: 0.01483
+
+
+03/28/2025,11:02:23:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   2
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    10
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+03/28/2025,11:20:12: ------------------------------
+03/28/2025,11:20:12: valid Recall@10: 0.05873 Recall@20: 0.08596 NDCG@10: 0.03453 NDCG@20: 0.04202
+03/28/2025,11:20:12: test Recall@10: 0.02245 Recall@20: 0.03514 NDCG@10: 0.01169 NDCG@20: 0.01510
+
+
+04/01/2025,19:56:54:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    1
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+
+
+04/01/2025,20:10:27:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.01
+embedding_dim                            400
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.01
+embedding_dim                            20
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   1
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 bpr
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.001
+wd                                       1e-05
+lmbda                                    0.001
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    100
+dcd_T                                    10
+dcd_mxK                                  500
+dcd_L                                    200
+neg_x                                    1
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------

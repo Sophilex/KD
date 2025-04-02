@@ -38,3 +38,6 @@ python main.py --dataset=citeulike --backbone=lightgcn --model=rrdvk --gpu_id=1 
 python main.py --dataset=citeulike --backbone=lightgcn --model=rrdvk --gpu_id=1 --cfg neg_T=100 rrd_extra=4000 calu_len=5  mode="val_diff" sample_type_for_extra="T_val_with_uninteresting" alpha=20
 python main.py --dataset=citeulike --backbone=lightgcn --model=rrdvk --gpu_id=1 --cfg neg_T=100 rrd_extra=4000 calu_len=5  mode="val_diff" sample_type_for_extra="T_val_with_uninteresting" alpha=100
 python main.py --dataset=citeulike --backbone=lightgcn --model=rrdvk --gpu_id=1 --cfg neg_T=100 rrd_extra=4000 calu_len=5  mode="val_diff" sample_type_for_extra="T_val_with_uninteresting" alpha=1000
+
+
+# python main.py --dataset=gowalla --backbone=bpr --model=dcd --gpu_id=1

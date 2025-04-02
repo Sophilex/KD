@@ -163,14 +163,14 @@ def main(args):
                 best_model = deepcopy(model.param_to_save)
                 best_epoch = epoch
         
-        if epoch % 50 == 0 and epoch != 0 and args.draw_student and args.draw_type.lower() == "ccdf":
+        if epoch in [10, 30, 50, 100, 200, 500] and epoch != 0 and args.draw_student and args.draw_type.lower() == "ccdf":
             drawer.plot_CCDF4negs(model, train_loader, validset, testset, "epoch {}".format(epoch), args.draw_mxK)
         
         # save intermediate checkpoints
         if not args.no_save and args.ckpt_interval != -1 and epoch % args.ckpt_interval == 0 and epoch != 0:
             ckpts.append(deepcopy(model.param_to_save))
     if args.draw_student:
-        drawer.plot_all(f"student-{args.draw_type.lower()}.png")
+        drawer.plot_all_subfig(f"student-{args.draw_type.lower()}-{args.draw_name}.{args.savetype}", args.x_name, args.y_name, args.savetype)
     eval_dict = evaluator.eval_dict
     Evaluator.print_final_result(logger, eval_dict)
     Evaluator.print_final_result(ans_logger, eval_dict)
