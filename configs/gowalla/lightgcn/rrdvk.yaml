@@ -11,10 +11,10 @@ rrd_mxK: 500
 rrd_unselected: 0
 rrd_neg: 1.5
 calu_len: 5
-rrd_extra: 5000
-mode: "val_diff"
-alpha: 1
-neg_T: 1
-sample_type_for_extra: "random_regardless_uninteresting"
+rrd_extra: 1000
+mode: "val_diff_2"
+alpha: 100
+neg_T: 100
+sample_type_for_extra: "T_val_with_uninteresting"
 T_for_extra: 1
-mx_T: 50
+mx_T: 100

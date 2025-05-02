@@ -284,6 +284,22 @@ class Drawer:
         plt.show()
         final_path = os.path.join(self.path, filename)
         plt.savefig(final_path)
+    
+    def plot_multi_curves(self, x_name, y_name, X, Y_list, label_list, filename, savetype):
+
+        plt.clf()  # 清空当前画布
+
+        for y, label in zip(Y_list, label_list):
+            plt.plot(X, y, label=label)
+        
+        plt.xlabel(x_name)
+        plt.ylabel(y_name)
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+
+        final_path = os.path.join(self.path, filename)
+        plt.savefig(final_path, format= savetype)
 
 class Var_calc:
     def __init__(self, args, data_loader):

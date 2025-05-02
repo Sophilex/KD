@@ -247,13 +247,13 @@ class DE(BaseKD4Rec):
 
         self.current_T = self.end_T * self.anneal_size
 
-        # expert_dims = [self.student_dim, (self.teacher_dim + self.student_dim) // 2, self.teacher_dim]
-        expert_dims = [self.student_dim*2, (self.teacher_dim + self.student_dim), self.teacher_dim*2]
+        expert_dims = [self.student_dim, (self.teacher_dim + self.student_dim) // 2, self.teacher_dim]
+        # expert_dims = [self.student_dim*2, (self.teacher_dim + self.student_dim), self.teacher_dim*2]
         self.user_experts = nn.ModuleList([Expert(expert_dims) for i in range(self.num_experts)])
         self.item_experts = nn.ModuleList([Expert(expert_dims) for i in range(self.num_experts)])
 
-        self.user_selection_net = nn.Sequential(nn.Linear(self.teacher_dim*2, self.num_experts), nn.Softmax(dim=1))
-        self.item_selection_net = nn.Sequential(nn.Linear(self.teacher_dim*2, self.num_experts), nn.Softmax(dim=1))
+        self.user_selection_net = nn.Sequential(nn.Linear(self.teacher_dim, self.num_experts), nn.Softmax(dim=1))
+        self.item_selection_net = nn.Sequential(nn.Linear(self.teacher_dim, self.num_experts), nn.Softmax(dim=1))
 
         self.sm = nn.Softmax(dim=1)
 
@@ -291,11 +291,12 @@ class DE(BaseKD4Rec):
             selection_dist = self.sm((selection_dist.log() + g) / self.current_T)
 
             selection_dist = torch.unsqueeze(selection_dist, 1)					# batch_size x 1 x num_experts
-            selection_result = selection_dist.repeat(1, self.teacher_dim*2, 1)			# batch_size x teacher_dims x num_experts
+            selection_result = selection_dist.repeat(1, self.teacher_dim, 1)			# batch_size x teacher_dims x num_experts
 
         expert_outputs = [experts[i](s).unsqueeze(-1) for i in range(self.num_experts)] 		# s -> t
         expert_outputs = torch.cat(expert_outputs, -1)							# batch_size x teacher_dims x num_experts
-
+        # print(f"selection_result, {selection_result.shape}")
+        # print(f"expert_outputs, {expert_outputs.shape}")
         expert_outputs = expert_outputs * selection_result						# batch_size x teacher_dims x num_experts
         expert_outputs = expert_outputs.sum(2)								# batch_size x teacher_dims	
 
@@ -310,6 +311,76 @@ class DE(BaseKD4Rec):
         DE_loss = DE_loss_user + (DE_loss_pos + DE_loss_neg) * 0.5
         return DE_loss
 
+class DE_try(BaseKD4Rec):
+    def __init__(self, args, teacher, student):
+        super().__init__(args, teacher, student)
+
+        self.max_epoch = args.epochs
+        self.end_T = args.de_end_T
+        self.anneal_size = args.de_anneal_size
+        self.num_experts = args.de_num_experts
+        
+        self.student_dim = self.student.embedding_dim
+        self.teacher_dim = self.teacher.embedding_dim
+
+        self.current_T = self.end_T * self.anneal_size
+
+        expert_dims = [self.student_dim, (self.teacher_dim + self.student_dim) // 2, self.teacher_dim]
+        # expert_dims = [self.student_dim*2, (self.teacher_dim + self.student_dim), self.teacher_dim*2]
+        self.user_experts = nn.ModuleList([Expert(expert_dims) for i in range(self.num_experts)])
+        self.item_experts = nn.ModuleList([Expert(expert_dims) for i in range(self.num_experts)])
+
+        self.user_selection_net = nn.Sequential(nn.Linear(self.teacher_dim, self.num_experts))
+        self.item_selection_net = nn.Sequential(nn.Linear(self.teacher_dim, self.num_experts))
+
+        self.sm = nn.Softmax(dim=1)
+
+    def get_params_to_update(self):
+        return [{"params": [param for param in self.parameters() if param.requires_grad], 'lr': self.args.lr, 'weight_decay': self.args.wd}]
+
+    def do_something_in_each_epoch(self, epoch):
+        self.current_T = self.end_T * self.anneal_size * ((1. / self.anneal_size) ** (epoch / self.max_epoch))
+        self.current_T = max(self.current_T, self.end_T)
+
+
+    def get_DE_loss(self, batch_entity, is_user=True):
+        if is_user:
+            s = self.student.get_user_embedding(batch_entity)
+            t = self.teacher.get_user_embedding(batch_entity)
+
+            experts = self.user_experts
+            selection_net = self.user_selection_net
+        else:
+            s = self.student.get_item_embedding(batch_entity)
+            t = self.teacher.get_item_embedding(batch_entity)
+            
+            experts = self.item_experts
+            selection_net = self.item_selection_net
+        
+        selection_dist = selection_net(t) 			# batch_size x num_experts
+        _, selection_dist = torch.topk(selection_dist, 1, dim=1)
+        selection_dist = F.one_hot(selection_dist, self.num_experts)	# batch_size x num_experts
+
+        selection_dist = torch.unsqueeze(selection_dist, 1)					# batch_size x 1 x num_experts
+        selection_result = selection_dist.repeat(1, self.teacher_dim, 1)			# batch_size x teacher_dims x num_experts
+
+        expert_outputs = [experts[i](s).unsqueeze(-1) for i in range(self.num_experts)] 		# s -> t
+        expert_outputs = torch.cat(expert_outputs, -1)							# batch_size x teacher_dims x num_experts
+        # print(f"selection_result, {selection_result.shape}")
+        # print(f"expert_outputs, {expert_outputs.shape}")
+        expert_outputs = expert_outputs * selection_result						# batch_size x teacher_dims x num_experts
+        expert_outputs = expert_outputs.sum(2)								# batch_size x teacher_dims	
+
+        DE_loss = ((t - expert_outputs) ** 2).sum(-1).sum()
+
+        return DE_loss
+
+    def get_loss(self, batch_user, batch_pos_item, batch_neg_item):
+        DE_loss_user = self.get_DE_loss(batch_user.unique(), is_user=True)
+        DE_loss_pos = self.get_DE_loss(batch_pos_item.unique(), is_user=False)
+        DE_loss_neg = self.get_DE_loss(batch_neg_item.unique(), is_user=False)
+        DE_loss = DE_loss_user + (DE_loss_pos + DE_loss_neg) * 0.5
+        return DE_loss
 
 class RRDUnselected(BaseKD4Rec):
     def __init__(self, args, teacher, student):
@@ -520,6 +591,8 @@ class RRD(BaseKD4Rec):
 
         return URRD_loss
 
+
+
 class ISp(BaseKD4Rec):
     def __init__(self, args, teacher, student):
         super().__init__(args, teacher, student)
@@ -614,11 +687,6 @@ class RRDVar(BaseKD4Rec):
     def set_model_variance(self, model_variance):
         self.model_variance = model_variance.cpu()
         self.model_variance += 1e-8
-        # print(f"Set model_variance - min: {self.model_variance.min()}, max: {self.model_variance.max()}")
-        # print(self.model_variance.shape)
-        # print(self.mask.shape)
-
-
 
     def get_topk_dict(self):
 
@@ -981,7 +1049,7 @@ class RRDVK2(BaseKD4Rec):
         self.ranking_mat = ranking_list.repeat(self.num_users, 1) # 对每一个用户生成一个固定的interesting样本采样概率列表
 
         # For uninteresting item
-        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float) # 没事不要把这么大的张量直接放进gpu...
+        self.mask = torch.ones((self.num_users, self.num_items), dtype=torch.float)
         train_pairs = self.dataset.train_pairs
         self.mask[train_pairs[:, 0], train_pairs[:, 1]] = 0
         for user in range(self.num_users):
@@ -1362,14 +1430,26 @@ class DCD(BaseKD4Rec):
  
     def do_something_in_each_epoch(self, epoch):
         with torch.no_grad():
+            
+            num_parts = 256
+            chunk_size = self.num_users // num_parts
             S_pred = self.student.get_all_ratings() # user_num X item_num
-            S_topk = torch.argsort(S_pred, descending=True, dim=-1) # user_num X item_num, 返回降序排序后每一个位置对应的原item的idx
-            S_rank = torch.argsort(S_topk, dim=-1) # 返回
-            S_rank = S_rank[torch.arange(len(S_rank)).unsqueeze(-1), self.T_topk]
-            diff = S_rank - self.T_rank
-            rank_diff = torch.maximum(torch.tanh(torch.maximum(diff / self.T, torch.tensor(0.))), torch.tensor(1e-5))
-            diff_inv = self.T_rank - S_rank
-            rank_diff_inv = torch.maximum(torch.tanh(torch.maximum(diff_inv / self.T, torch.tensor(0.))), torch.tensor(1e-5))
+            rank_diff = torch.zeros((self.num_users, self.mxK), dtype=torch.float).cuda()
+            rank_diff_inv = torch.zeros((self.num_users, self.mxK), dtype=torch.float).cuda()
+
+            for start_idx in range(0, self.num_users, num_parts):
+                end_idx = min(start_idx + num_parts, self.num_users)
+                batch_user = torch.arange(start_idx, end_idx)
+                S_pred_slice = S_pred[batch_user, :].cuda() # batch_size X item_num
+
+                S_topk = torch.argsort(S_pred_slice, descending=True, dim=-1) # user_num X item_num, 返回降序排序后每一个位置对应的原item的idx
+                S_rank = torch.argsort(S_topk, dim=-1) # 返回
+                S_rank = S_rank[torch.arange(len(S_rank)).unsqueeze(-1), self.T_topk[start_idx:end_idx].cuda()] # user_num X item_num, 取出每个用户的topk的rank
+
+                diff = S_rank - self.T_rank[start_idx:end_idx]
+                rank_diff[start_idx:end_idx] = torch.maximum(torch.tanh(torch.maximum(diff / self.T, torch.tensor(0.))), torch.tensor(1e-5))
+                diff_inv = self.T_rank[start_idx:end_idx] - S_rank
+                rank_diff_inv[start_idx:end_idx] = torch.maximum(torch.tanh(torch.maximum(diff_inv / self.T, torch.tensor(0.))), torch.tensor(1e-5))
 
             # sampling
             underestimated_idx = torch.multinomial(rank_diff, self.K, replacement=False)

@@ -809,3 +809,67 @@ dcd_L                                    200
 neg_x                                    1
 dcd_tau                                  1
 ----------------------------------------ARGUMENTS----------------------------------------
+
+
+04/30/2025,19:45:29:  
+----------------------------------------Start Training----------------------------------------
+----------------------------------------TEACHER----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            2000
+num_layers                               3
+----------------------------------------TEACHER----------------------------------------
+----------------------------------------STUDENT----------------------------------------
+init_std                                 0.1
+keep_prob                                0.6
+A_split                                  False
+dropout                                  False
+embedding_dim                            20
+num_layers                               3
+----------------------------------------STUDENT----------------------------------------
+----------------------------------------ARGUMENTS----------------------------------------
+run_all                                  False
+seed                                     0
+gpu_id                                   3
+no_log                                   False
+no_save                                  False
+suffix                                   
+verbose                                  False
+ablation                                 False
+task                                     rec
+dataset                                  citeulike
+batch_size                               2048
+num_ns                                   1
+neg_sampling_on_all                      False
+backbone                                 lightgcn
+model                                    dcd
+train_teacher                            False
+ckpt_interval                            -1
+epochs                                   1000
+lr                                       0.0001
+wd                                       0.001
+lmbda                                    0.01
+eval_period                              1
+K_list                                   [10, 20]
+early_stop_metric                        NDCG
+early_stop_K                             10
+early_stop_patience                      30
+draw_teacher                             False
+draw_student                             False
+LOG_DIR                                  logs/
+CONFIG_DIR                               configs/
+DATA_DIR                                 data/
+CKPT_DIR                                 checkpoints/
+SHORT_LOG_DIR                            short_logs/
+dcd_K                                    200
+dcd_T                                    10
+dcd_mxK                                  1000
+dcd_L                                    400
+neg_x                                    1
+dcd_tau                                  1
+----------------------------------------ARGUMENTS----------------------------------------
+04/30/2025,20:50:05: ------------------------------
+04/30/2025,20:50:05: valid Recall@10: 0.05399 Recall@20: 0.07669 NDCG@10: 0.03107 NDCG@20: 0.03735
+04/30/2025,20:50:05: test Recall@10: 0.01929 Recall@20: 0.03017 NDCG@10: 0.01046 NDCG@20: 0.01343
